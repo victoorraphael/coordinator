@@ -9,16 +9,11 @@ services:
       - ./data/db/mongo:/data/db
     ports:
       - '27017-27019:27017-27019'
-    networks:
-      - base
   web:
     build: .
     ports:
       - "8080:8080"
     depends_on:
       - database
-    networks:
-      - base
-networks:
-  base:
-    driver: bridge
+    links:
+      - database

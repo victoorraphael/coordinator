@@ -3,6 +3,7 @@ package mongo
 import (
 	"context"
 	"errors"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"log"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -34,7 +35,8 @@ func New(connStr string) (*MongoRepository, error) {
 }
 
 func (repo *MongoRepository) Ping() bool {
-	err := repo.db.Client().Ping(context.TODO(), nil)
+	log.Println("trying to ping database...")
+	err := repo.db.Client().Ping(context.TODO(), readpref.Primary())
 	if err != nil {
 		log.Println("failed to ping mongo db, err:", err)
 		return false
