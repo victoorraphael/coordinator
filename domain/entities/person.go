@@ -1,10 +1,12 @@
 package entities
 
-import "github.com/google/uuid"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Person struct {
-	ID    uuid.UUID
-	Name  string
-	Email string
-	Phone string
+	ID    primitive.ObjectID `json:"id" bson:"_id"`
+	Name  string             `json:"name" bson:"name"`
+	Email string             `json:"email" bson:"email"`
+	Phone string             `json:"phone" bson:"phone"`
 }

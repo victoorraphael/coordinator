@@ -16,7 +16,7 @@ var (
 
 type StudentRepository interface {
 	Get(uuid.UUID) (Student, error)
-	Add(Student) error
+	Add(*Student) (map[string]interface{}, error)
 	Update(Student) error
 	Delete(uuid.UUID) error
 }
@@ -41,6 +41,10 @@ func New(p entities.Person) (Student, error) {
 
 func (s *Student) GetID() uuid.UUID {
 	return s.person.ID
+}
+
+func (s *Student) SetID(id uuid.UUID) {
+	s.person.ID = id
 }
 
 func (s *Student) GetName() string {
