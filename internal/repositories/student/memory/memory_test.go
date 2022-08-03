@@ -1,9 +1,9 @@
 package memory
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"testing"
 
-	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"
 	"github.com/victoorraphael/school-plus-BE/domain/entities"
 	"github.com/victoorraphael/school-plus-BE/internal/repositories/student"
@@ -12,20 +12,20 @@ import (
 func TestMemory_GetStudent(t *testing.T) {
 	assert := require.New(t)
 	repo := New()
-	student, _ := student.New(entities.Person{Name: "Raphael", Email: "raphael@email.com"})
+	std, _ := student.New(entities.Person{Name: "Raphael", Email: "raphael@email.com"})
 
-	_ = repo.Add(student)
+	_ = repo.Add(std)
 
 	type test struct {
 		test        string
-		id          uuid.UUID
+		id          primitive.ObjectID
 		expectedErr error
 	}
 
 	testCases := []test{
 		{
-			test:        "get student",
-			id:          student.GetID(),
+			test:        "get std",
+			id:          std.GetID(),
 			expectedErr: nil,
 		},
 	}
@@ -34,8 +34,8 @@ func TestMemory_GetStudent(t *testing.T) {
 		t.Run(tc.test, func(t *testing.T) {
 			st, err := repo.Get(tc.id)
 			assert.Nil(err)
-			assert.Equal(st.GetName(), student.GetName())
-			assert.Equal(st.GetEmail(), student.GetEmail())
+			assert.Equal(st.GetName(), std.GetName())
+			assert.Equal(st.GetEmail(), std.GetEmail())
 		})
 	}
 }

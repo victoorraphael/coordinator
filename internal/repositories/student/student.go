@@ -2,23 +2,24 @@ package student
 
 import (
 	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	_ "go.mongodb.org/mongo-driver/bson/primitive"
 
-	"github.com/google/uuid"
 	"github.com/victoorraphael/school-plus-BE/domain/entities"
 )
 
 var (
-	ErrInvalidPerson    = errors.New("a student has to have a valid person")
+	ErrInvalidPerson    = errors.New("a student has to have a valid person with name and email")
 	ErrStudentNotFound  = errors.New("student not found")
 	ErrFailedAddStudent = errors.New("failed to create student")
 	ErrUpdateStudent    = errors.New("failed to  update student")
 )
 
 type StudentRepository interface {
-	Get(uuid.UUID) (Student, error)
+	Get(primitive.ObjectID) (Student, error)
 	Add(*Student) (map[string]interface{}, error)
 	Update(Student) error
-	Delete(uuid.UUID) error
+	Delete(primitive.ObjectID) error
 }
 
 type Student struct {
@@ -26,8 +27,8 @@ type Student struct {
 }
 
 func New(p entities.Person) (Student, error) {
-	if p.ID == uuid.Nil {
-		p.ID = uuid.New()
+	if p.ID == primitive.NilObjectID {
+		p.ID = primitive.NewObjectID()
 	}
 
 	if p.Email == "" || p.Name == "" {
@@ -39,11 +40,11 @@ func New(p entities.Person) (Student, error) {
 	}, nil
 }
 
-func (s *Student) GetID() uuid.UUID {
+func (s *Student) GetID() primitive.ObjectID {
 	return s.person.ID
 }
 
-func (s *Student) SetID(id uuid.UUID) {
+func (s *Student) SetID(id primitive.ObjectID) {
 	s.person.ID = id
 }
 

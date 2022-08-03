@@ -1,24 +1,24 @@
 package memory
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"sync"
 
-	"github.com/google/uuid"
 	"github.com/victoorraphael/school-plus-BE/internal/repositories/student"
 )
 
 type MemoryRepository struct {
-	students map[uuid.UUID]student.Student
+	students map[primitive.ObjectID]student.Student
 	sync.Mutex
 }
 
 func New() *MemoryRepository {
 	return &MemoryRepository{
-		students: make(map[uuid.UUID]student.Student),
+		students: make(map[primitive.ObjectID]student.Student),
 	}
 }
 
-func (store *MemoryRepository) Get(id uuid.UUID) (student.Student, error) {
+func (store *MemoryRepository) Get(id primitive.ObjectID) (student.Student, error) {
 	if s, ok := store.students[id]; ok {
 		return s, nil
 	}
@@ -29,7 +29,7 @@ func (store *MemoryRepository) Get(id uuid.UUID) (student.Student, error) {
 func (store *MemoryRepository) Add(s student.Student) error {
 	if store.students == nil {
 		store.Lock()
-		store.students = make(map[uuid.UUID]student.Student)
+		store.students = make(map[primitive.ObjectID]student.Student)
 		store.Unlock()
 	}
 
@@ -53,7 +53,7 @@ func (store *MemoryRepository) Update(s student.Student) error {
 	return nil
 }
 
-func (store *MemoryRepository) Delete(id uuid.UUID) error {
+func (store *MemoryRepository) Delete(id primitive.ObjectID) error {
 	if _, ok := store.students[id]; !ok {
 		return student.ErrStudentNotFound
 	}
