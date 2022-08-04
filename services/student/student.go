@@ -2,8 +2,9 @@ package student
 
 import (
 	"errors"
-	"github.com/google/uuid"
+	"github.com/victoorraphael/school-plus-BE/domain/entities"
 	"github.com/victoorraphael/school-plus-BE/internal/repositories/student"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 )
 
@@ -16,7 +17,7 @@ type service struct {
 }
 
 type Service interface {
-	Get(uuid.UUID) (student.Student, error)
+	Get(id primitive.ObjectID) (student.Student, error)
 	Add(student.Student) (map[string]interface{}, error)
 }
 
@@ -24,8 +25,8 @@ func New(s student.StudentRepository) Service {
 	return &service{students: s}
 }
 
-func (s service) Get(id uuid.UUID) (student.Student, error) {
-	if id == uuid.Nil {
+func (s service) Get(id primitive.ObjectID) (student.Student, error) {
+	if id == primitive.NilObjectID {
 		log.Println("error: student.service.Get, err:", ErrMissingID)
 		return student.Student{}, ErrMissingID
 	}
@@ -40,7 +41,16 @@ func (s service) Get(id uuid.UUID) (student.Student, error) {
 }
 
 func (s service) Add(std student.Student) (map[string]interface{}, error) {
-	data, err := s.students.Add(&std)
+	stud, err := student.New(entities.Person{
+		Name:  std.Name,
+		Email: std.Email,
+		Phone: std.Phone,
+	})
+	if err != nil {
+		log.Println("error: student.service.Add, err:", err)
+		return nil, err
+	}
+	data, err := s.students.Add(&stud)
 	if err != nil {
 		log.Println("error: student.service.Add, err:", err)
 		return nil, err

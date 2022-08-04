@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 
-	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
 	stdRepo "github.com/victoorraphael/school-plus-BE/internal/repositories/student"
 	"github.com/victoorraphael/school-plus-BE/services/student"
@@ -21,8 +21,11 @@ func StudentRoutes(e *echo.Echo, service student.Service) {
 
 func StudentHandlerGet(c echo.Context, s student.Service) error {
 	id := c.Param("id")
-	uuidGet := uuid.MustParse(id)
-	std, err := s.Get(uuidGet)
+	uid, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return c.String(http.StatusBadRequest, err.Error())
+	}
+	std, err := s.Get(uid)
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
@@ -31,7 +34,7 @@ func StudentHandlerGet(c echo.Context, s student.Service) error {
 }
 
 func StudentHandlerPost(c echo.Context, s student.Service) error {
-	std := stdRepo.Student{}
+	var std stdRepo.Student
 	if err := c.Bind(&std); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}

@@ -3,9 +3,9 @@ package mongo
 import (
 	"context"
 	"errors"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"log"
 
-	"github.com/google/uuid"
 	"github.com/victoorraphael/school-plus-BE/internal/repositories/student"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -19,10 +19,10 @@ type MongoRepository struct {
 	collection *mongo.Collection
 }
 
-func (repo *MongoRepository) Get(id uuid.UUID) (student.Student, error) {
+func (repo *MongoRepository) Get(id primitive.ObjectID) (student.Student, error) {
 	log.Println("info: looking for student with ID:", id)
 	var resp student.Student
-	err := repo.collection.FindOne(context.TODO(), bson.D{{Key: "_id", Value: id}}).Decode(&resp)
+	err := repo.collection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&resp)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			log.Println("info: doest not exist student with id:", id)
@@ -53,7 +53,7 @@ func (repo *MongoRepository) Update(student student.Student) error {
 	panic("implement me")
 }
 
-func (repo *MongoRepository) Delete(uuid uuid.UUID) error {
+func (repo *MongoRepository) Delete(id primitive.ObjectID) error {
 	//TODO implement me
 	panic("implement me")
 }

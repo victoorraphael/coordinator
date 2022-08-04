@@ -4,6 +4,7 @@ import (
 	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	_ "go.mongodb.org/mongo-driver/bson/primitive"
+	"log"
 
 	"github.com/victoorraphael/school-plus-BE/domain/entities"
 )
@@ -23,45 +24,26 @@ type StudentRepository interface {
 }
 
 type Student struct {
-	person entities.Person
+	ID primitive.ObjectID `json:"id" bson:"_id"`
+	entities.Person
 }
 
 func New(p entities.Person) (Student, error) {
-	if p.ID == primitive.NilObjectID {
-		p.ID = primitive.NewObjectID()
-	}
-
 	if p.Email == "" || p.Name == "" {
 		return Student{}, ErrInvalidPerson
 	}
 
+	log.Println("test", primitive.NewObjectID())
+
+	uid := primitive.NewObjectID()
+
 	return Student{
-		person: p,
+		ID: uid,
+		Person: entities.Person{
+			ID:    uid,
+			Name:  p.Name,
+			Email: p.Email,
+			Phone: p.Phone,
+		},
 	}, nil
-}
-
-func (s *Student) GetID() primitive.ObjectID {
-	return s.person.ID
-}
-
-func (s *Student) SetID(id primitive.ObjectID) {
-	s.person.ID = id
-}
-
-func (s *Student) GetName() string {
-	return s.person.Name
-}
-
-func (s *Student) SetName(name string) *Student {
-	s.person.Name = name
-	return s
-}
-
-func (s *Student) GetEmail() string {
-	return s.person.Email
-}
-
-func (s *Student) SetEmail(email string) *Student {
-	s.person.Email = email
-	return s
 }
