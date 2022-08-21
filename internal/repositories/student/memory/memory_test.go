@@ -1,11 +1,12 @@
 package memory
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"github.com/victoorraphael/school-plus-BE/infra/entities"
 	"testing"
 
+	"go.mongodb.org/mongo-driver/bson/primitive"
+
 	"github.com/stretchr/testify/require"
-	"github.com/victoorraphael/school-plus-BE/domain/entities"
 	"github.com/victoorraphael/school-plus-BE/internal/repositories/student"
 )
 
@@ -25,7 +26,7 @@ func TestMemory_GetStudent(t *testing.T) {
 	testCases := []test{
 		{
 			test:        "get std",
-			id:          std.GetID(),
+			id:          std.ID,
 			expectedErr: nil,
 		},
 	}
@@ -34,8 +35,8 @@ func TestMemory_GetStudent(t *testing.T) {
 		t.Run(tc.test, func(t *testing.T) {
 			st, err := repo.Get(tc.id)
 			assert.Nil(err)
-			assert.Equal(st.GetName(), std.GetName())
-			assert.Equal(st.GetEmail(), std.GetEmail())
+			assert.Equal(st.Name, std.Name)
+			assert.Equal(st.Email, std.Email)
 		})
 	}
 }

@@ -2,11 +2,10 @@ package student
 
 import (
 	"errors"
+	"github.com/victoorraphael/school-plus-BE/infra/entities"
+
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	_ "go.mongodb.org/mongo-driver/bson/primitive"
-	"log"
-
-	"github.com/victoorraphael/school-plus-BE/domain/entities"
 )
 
 var (
@@ -16,7 +15,8 @@ var (
 	ErrUpdateStudent    = errors.New("failed to  update student")
 )
 
-type StudentRepository interface {
+type Repository interface {
+	List() ([]Student, error)
 	Get(primitive.ObjectID) (Student, error)
 	Add(*Student) (map[string]interface{}, error)
 	Update(Student) error
@@ -33,17 +33,16 @@ func New(p entities.Person) (Student, error) {
 		return Student{}, ErrInvalidPerson
 	}
 
-	log.Println("test", primitive.NewObjectID())
-
 	uid := primitive.NewObjectID()
 
 	return Student{
 		ID: uid,
 		Person: entities.Person{
-			ID:    uid,
-			Name:  p.Name,
-			Email: p.Email,
-			Phone: p.Phone,
+			ID:      uid,
+			Name:    p.Name,
+			Email:   p.Email,
+			Phone:   p.Phone,
+			Address: p.Address,
 		},
 	}, nil
 }

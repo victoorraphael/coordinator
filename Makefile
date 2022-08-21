@@ -10,7 +10,7 @@ local: compose-db
 compose-up: compose-down
 	docker-compose up --build
 
-compose-down:
+clear:
 	docker-compose down
 
 compose-db:

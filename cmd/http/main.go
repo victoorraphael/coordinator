@@ -1,15 +1,19 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/victoorraphael/school-plus-BE/cmd/http/handlers"
-	"github.com/victoorraphael/school-plus-BE/internal/repositories/student/mongo"
+	"github.com/victoorraphael/school-plus-BE/infra/connect"
 	"github.com/victoorraphael/school-plus-BE/services/student"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"time"
 )
 
 type Status struct {
@@ -19,9 +23,8 @@ type Status struct {
 
 func main() {
 	PORT := os.Getenv("PORT")
-	MONGO := os.Getenv("MONGO_URI")
 
-	repo, _ := mongo.New(MONGO)
+	repo, _ := connect.Connect()
 
 	e := echo.New()
 	stdService := student.New(repo)
@@ -31,7 +34,7 @@ func main() {
 	e.Use(middleware.Recover())
 
 	e.GET("/ping", func(c echo.Context) error {
-		dbStatus := repo.Ping()
+		dbStatus := repo.DB.Ping()
 		res := Status{
 			System:  true,
 			MongoDB: dbStatus,
@@ -44,8 +47,32 @@ func main() {
 		panic(err)
 	}
 
+	srv := e.Server
+	srv.Addr = fmt.Sprintf(":%v", PORT)
+	srv.WriteTimeout = time.Second * 15
+	srv.ReadTimeout = time.Second * 15
+	srv.IdleTimeout = time.Second * 60
+
+	go func() {
+		err := srv.ListenAndServe()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
+
 	fmt.Println("routes registered...")
 	fmt.Printf("%s\n", data)
 
-	e.Logger.Fatal(e.Start(fmt.Sprintf(":%s", PORT)))
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+
+	<-c
+
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*1)
+	defer cancel()
+
+	_ = srv.Shutdown(ctx)
+	log.Println("shutting down! 👋🏼")
+
+	os.Exit(0)
 }

@@ -1,8 +1,9 @@
 package memory
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"sync"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 
 	"github.com/victoorraphael/school-plus-BE/internal/repositories/student"
 )
@@ -33,23 +34,23 @@ func (store *MemoryRepository) Add(s student.Student) error {
 		store.Unlock()
 	}
 
-	if _, ok := store.students[s.GetID()]; ok {
+	if _, ok := store.students[s.ID]; ok {
 		return student.ErrFailedAddStudent
 	}
 
 	store.Lock()
-	store.students[s.GetID()] = s
+	store.students[s.ID] = s
 	store.Unlock()
 
 	return nil
 }
 
 func (store *MemoryRepository) Update(s student.Student) error {
-	if _, ok := store.students[s.GetID()]; !ok {
+	if _, ok := store.students[s.ID]; !ok {
 		return student.ErrStudentNotFound
 	}
 
-	store.students[s.GetID()] = s
+	store.students[s.ID] = s
 	return nil
 }
 
