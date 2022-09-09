@@ -6,9 +6,7 @@ import (
 )
 
 func All(adapters *entities.Adapters) []entities.Service {
-	stdSrv := student.New(adapters)
-
 	return []entities.Service{
-		stdSrv,
+		student.New(adapters),
 	}
 }
