@@ -1,5 +1,5 @@
 export PORT = 8080
-export MONGO_URI = mongodb://localhost:27017
+export DB_URI = postgres://root:secret@localhost:5432/schoolplus?sslmode=disable
 
 run: compose-up
 	go run cmd/http/main.go

@@ -1,14 +1,19 @@
 version: '3'
 services:
   database:
-    image: 'mongo'
-    container_name: 'mongodb'
+    image: 'postgres:14'
+    container_name: 'postgres'
     environment:
-      - MONGO_INITDB_DATABASE=schoolplus
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=secret
+      - POSTGRES_DB=schoolplus
     volumes:
-      - ./data/db/mongo:/data/db
+      - ./data/db/postgres:/data/db
+      - ./db/extensions/:/docker-entrypoint-initdb.d/
     ports:
-      - '27017-27019:27017-27019'
+      - '5432:5432'
+    networks:
+      - app
   web:
     build: .
     ports:
@@ -17,3 +22,8 @@ services:
       - database
     links:
       - database
+    networks:
+      - app
+networks:
+  app:
+    driver: bridge

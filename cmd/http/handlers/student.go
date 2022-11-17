@@ -1,15 +1,16 @@
 package handlers
 
 import (
-	stdRepo "github.com/victoorraphael/school-plus-BE/internal/repositories/student"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"net/http"
 
+	"github.com/google/uuid"
+	"github.com/victoorraphael/school-plus-BE/infra/contracts"
+	"github.com/victoorraphael/school-plus-BE/infra/entities"
+
 	"github.com/labstack/echo/v4"
-	"github.com/victoorraphael/school-plus-BE/services/student"
 )
 
-func StudentRoutes(e *echo.Echo, service student.Service) {
+func StudentRoutes(e *echo.Echo, service contracts.IService[entities.Student]) {
 	std := e.Group("/students")
 
 	std.Add("GET", "/", func(c echo.Context) error {
@@ -23,7 +24,7 @@ func StudentRoutes(e *echo.Echo, service student.Service) {
 	})
 }
 
-func StudentHandlerGetList(c echo.Context, s student.Service) error {
+func StudentHandlerGetList(c echo.Context, s contracts.IService[entities.Student]) error {
 	stds, err := s.List()
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -32,13 +33,10 @@ func StudentHandlerGetList(c echo.Context, s student.Service) error {
 	return c.JSON(http.StatusOK, stds)
 }
 
-func StudentHandlerGet(c echo.Context, s student.Service) error {
+func StudentHandlerGet(c echo.Context, s contracts.IService[entities.Student]) error {
 	id := c.Param("id")
-	uid, err := primitive.ObjectIDFromHex(id)
-	if err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
-	}
-	std, err := s.Get(uid)
+	uid := uuid.MustParse(id)
+	std, err := s.Get(entities.Student{ID: uid})
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
@@ -46,8 +44,8 @@ func StudentHandlerGet(c echo.Context, s student.Service) error {
 	return c.JSON(http.StatusOK, std)
 }
 
-func StudentHandlerPost(c echo.Context, s student.Service) error {
-	var std stdRepo.Student
+func StudentHandlerPost(c echo.Context, s contracts.IService[entities.Student]) error {
+	var std entities.Student
 	if err := c.Bind(&std); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
@@ -57,6 +55,5 @@ func StudentHandlerPost(c echo.Context, s student.Service) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
-	data["message"] = "successfully created"
 	return c.JSON(http.StatusOK, data)
 }

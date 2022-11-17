@@ -1,12 +1,9 @@
 package entities
 
-type AdaptersConfiguration func(a *Adapters) error
+import (
+	"github.com/victoorraphael/school-plus-BE/infra/adapters"
+)
 
 type Adapters struct {
-	DB DB
-}
-
-type DB interface {
-	Migrate()
-	Ping() bool
+	DB adapters.DBAdapter
 }

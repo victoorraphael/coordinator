@@ -4,21 +4,24 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
-	"github.com/victoorraphael/school-plus-BE/cmd/http/handlers"
-	"github.com/victoorraphael/school-plus-BE/infra/connect"
-	"github.com/victoorraphael/school-plus-BE/services/student"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"time"
+
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"github.com/victoorraphael/school-plus-BE/cmd/http/handlers"
+	"github.com/victoorraphael/school-plus-BE/infra/connect"
+	"github.com/victoorraphael/school-plus-BE/services/student"
+
+	_ "github.com/victoorraphael/school-plus-BE/infra/adapters"
 )
 
 type Status struct {
-	System  bool
-	MongoDB bool
+	System   bool
+	Database bool
 }
 
 func main() {
@@ -36,8 +39,8 @@ func main() {
 	e.GET("/ping", func(c echo.Context) error {
 		dbStatus := repo.DB.Ping()
 		res := Status{
-			System:  true,
-			MongoDB: dbStatus,
+			System:   true,
+			Database: dbStatus,
 		}
 		return c.JSON(http.StatusOK, res)
 	})

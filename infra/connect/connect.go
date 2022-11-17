@@ -6,13 +6,12 @@ import (
 )
 
 func Connect() (*entities.Adapters, error) {
-	mongoAdapt := adapters.MongoAdapter{}
-	err := mongoAdapt.Connect()
-	if err != nil {
+	postgres := &adapters.PostgresAdapater{}
+	if err := postgres.Connect(); err != nil {
 		return nil, err
 	}
 
 	return &entities.Adapters{
-		DB: &mongoAdapt,
+		DB: postgres,
 	}, nil
 }
