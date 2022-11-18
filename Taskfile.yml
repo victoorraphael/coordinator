@@ -30,7 +30,7 @@ tasks:
   migrate-down:
     desc: remove migrations on database
     cmds:
-      - migrate -database ${POSTGRESQL_URL} -path db/migrations down
+      - migrate -database ${DB_URI} -path db/migrations down
 
   create-table:
     desc: create a new table to be available on migration-up
