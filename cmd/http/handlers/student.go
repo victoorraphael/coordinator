@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/victoorraphael/school-plus-BE/infra/contracts"
-	"github.com/victoorraphael/school-plus-BE/infra/entities"
+	"github.com/victoorraphael/school-plus-BE/internal/contracts"
+	"github.com/victoorraphael/school-plus-BE/internal/entities"
 
 	"github.com/labstack/echo/v4"
 )

@@ -3,9 +3,9 @@ package student
 import (
 	"errors"
 
-	"github.com/victoorraphael/school-plus-BE/infra/contracts"
-	"github.com/victoorraphael/school-plus-BE/infra/contracts/repository"
-	"github.com/victoorraphael/school-plus-BE/infra/entities"
+	"github.com/victoorraphael/school-plus-BE/internal/contracts"
+	"github.com/victoorraphael/school-plus-BE/internal/contracts/repository"
+	"github.com/victoorraphael/school-plus-BE/internal/entities"
 )
 
 var (

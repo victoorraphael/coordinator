@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/google/uuid"
-	"github.com/victoorraphael/school-plus-BE/infra/entities"
+	"github.com/victoorraphael/school-plus-BE/internal/entities"
 )
 
 type studentRepo struct {

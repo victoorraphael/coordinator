@@ -6,27 +6,33 @@ env:
 
 tasks:
   run:
+    desc: run project locally and db on docker
     cmds:
       - task: db
       - go run cmd/http/main.go
 
   db:
+    desc: run db on docker
     cmds:
       - docker-compose up -d --build database
 
   clear:
+    desc: clear docker containers
     cmds:
       - docker-compose down
       - echo "Done! 👋🏼"
 
   migrate-up:
+    desc: run migrations on database
     cmds:
       - migrate -database ${DB_URI} -path db/migrations up
 
   migrate-down:
+    desc: remove migrations on database
     cmds:
       - migrate -database ${POSTGRESQL_URL} -path db/migrations down
 
   create-table:
+    desc: create a new table to be available on migration-up
     cmds:
       - migrate create -ext sql -dir db/migrations -seq {{.CLI_ARGS}}
