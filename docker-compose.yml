@@ -11,7 +11,7 @@ services:
       - ./data/db/postgres:/data/db
       - ./db/extensions/:/docker-entrypoint-initdb.d/
     ports:
-      - '5432:5432'
+      - '5454:5432'
     networks:
       - app
   web:

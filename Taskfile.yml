@@ -1,0 +1,32 @@
+version: '3'
+
+env:
+  PORT: 8080
+  DB_URI: postgres://root:secret@localhost:5454/schoolplus?sslmode=disable
+
+tasks:
+  run:
+    cmds:
+      - task: db
+      - go run cmd/http/main.go
+
+  db:
+    cmds:
+      - docker-compose up -d --build database
+
+  clear:
+    cmds:
+      - docker-compose down
+      - echo "Done! 👋🏼"
+
+  migrate-up:
+    cmds:
+      - migrate -database ${DB_URI} -path db/migrations up
+
+  migrate-down:
+    cmds:
+      - migrate -database ${POSTGRESQL_URL} -path db/migrations down
+
+  create-table:
+    cmds:
+      - migrate create -ext sql -dir db/migrations -seq {{.CLI_ARGS}}
