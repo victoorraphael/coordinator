@@ -1,16 +1,15 @@
 package handlers
 
 import (
+	"github.com/victoorraphael/school-plus-BE/internal/student"
 	"net/http"
 
 	"github.com/google/uuid"
-	"github.com/victoorraphael/school-plus-BE/internal/contracts"
-	"github.com/victoorraphael/school-plus-BE/internal/entities"
-
 	"github.com/labstack/echo/v4"
+	"github.com/victoorraphael/school-plus-BE/internal/contracts"
 )
 
-func StudentRoutes(e *echo.Echo, service contracts.IService[entities.Student]) {
+func StudentRoutes(e *echo.Echo, service contracts.IService[student.Student]) {
 	std := e.Group("/students")
 
 	std.Add("GET", "/", func(c echo.Context) error {
@@ -24,7 +23,7 @@ func StudentRoutes(e *echo.Echo, service contracts.IService[entities.Student]) {
 	})
 }
 
-func StudentHandlerGetList(c echo.Context, s contracts.IService[entities.Student]) error {
+func StudentHandlerGetList(c echo.Context, s contracts.IService[student.Student]) error {
 	stds, err := s.List()
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -33,10 +32,12 @@ func StudentHandlerGetList(c echo.Context, s contracts.IService[entities.Student
 	return c.JSON(http.StatusOK, stds)
 }
 
-func StudentHandlerGet(c echo.Context, s contracts.IService[entities.Student]) error {
+func StudentHandlerGet(c echo.Context, s contracts.IService[student.Student]) error {
 	id := c.Param("id")
 	uid := uuid.MustParse(id)
-	std, err := s.Get(entities.Student{ID: uid})
+	studentQuery := student.New()
+	studentQuery.UUID = uid
+	std, err := s.Get(studentQuery)
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
@@ -44,8 +45,8 @@ func StudentHandlerGet(c echo.Context, s contracts.IService[entities.Student]) e
 	return c.JSON(http.StatusOK, std)
 }
 
-func StudentHandlerPost(c echo.Context, s contracts.IService[entities.Student]) error {
-	var std entities.Student
+func StudentHandlerPost(c echo.Context, s contracts.IService[student.Student]) error {
+	var std student.Student
 	if err := c.Bind(&std); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}

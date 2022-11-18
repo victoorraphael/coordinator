@@ -1,55 +1,41 @@
 package student
 
 import (
-	"errors"
-
-	"github.com/victoorraphael/school-plus-BE/internal/contracts"
-	"github.com/victoorraphael/school-plus-BE/internal/contracts/repository"
-	"github.com/victoorraphael/school-plus-BE/internal/entities"
+	"github.com/victoorraphael/school-plus-BE/internal/person"
 )
 
-var (
-	ErrMissingID = errors.New("missing ID")
-)
-
-type StudentService struct {
-	students repository.IStudentRepo
+type Student struct {
+	person.Person
 }
 
-func New(adapters *entities.Adapters) contracts.IService[entities.Student] {
-	return &StudentService{
-		students: repository.NewStudentRepo(adapters),
-	}
-}
-
-func (ss *StudentService) Add(s entities.Student) (entities.Student, error) {
-	var response entities.Student
-	uid, err := ss.students.Add(s)
-	if err != nil {
-		return response, err
-	}
-
-	response.ID = uid
-	return response, nil
-}
-
-func (ss *StudentService) Get(s entities.Student) (entities.Student, error) {
-	response, err := ss.students.FindOne(s)
-	if err != nil {
-		return response, err
-	}
-
-	return response, nil
-}
-
-func (ss *StudentService) List() ([]entities.Student, error) {
+func (s Student) Add(t Student) (Student, error) {
+	//TODO implement me
 	panic("implement me")
 }
 
-func (ss *StudentService) Update(s entities.Student) error {
+func (s Student) Get(t Student) (Student, error) {
+	return person.
+}
+
+func (s Student) List() ([]Student, error) {
+	//TODO implement me
 	panic("implement me")
 }
 
-func (ss *StudentService) Delete(s entities.Student) error {
+func (s Student) Update(t Student) error {
+	//TODO implement me
 	panic("implement me")
+}
+
+func (s Student) Delete(t Student) error {
+	//TODO implement me
+	panic("implement me")
+}
+
+func New() Student {
+	return Student{
+		person.Person{
+			Type: person.Student,
+		},
+	}
 }

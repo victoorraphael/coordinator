@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS persons(
   phone varchar(11),
   birthdate timestamp,
   created_at timestamp default now(),
+  type smallint,
 
   PRIMARY KEY (id)
 );
