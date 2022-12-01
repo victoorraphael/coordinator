@@ -4,7 +4,7 @@ type Student struct {
 	Person
 }
 
-func New() Student {
+func NewStudent() Student {
 	return Student{Person{
 		Type: PersonStudent,
 	}}

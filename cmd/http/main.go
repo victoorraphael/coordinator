@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/victoorraphael/coordinator/internal/service"
 	"log"
 	"net/http"
 	"os"
@@ -17,6 +16,7 @@ import (
 	"github.com/victoorraphael/coordinator/cmd/http/handlers"
 	_ "github.com/victoorraphael/coordinator/internal/adapters"
 	"github.com/victoorraphael/coordinator/internal/connect"
+	"github.com/victoorraphael/coordinator/internal/service"
 )
 
 type Status struct {
@@ -28,6 +28,10 @@ func main() {
 	PORT := os.Getenv("PORT")
 
 	adapters, _ := connect.Connect()
+	defer func() {
+		log.Println("closing connection with database ⌛")
+		_ = adapters.DB.GetDatabase().Close()
+	}()
 
 	e := echo.New()
 	services := service.New(adapters)

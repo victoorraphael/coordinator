@@ -2,37 +2,40 @@ package adapters
 
 import (
 	"database/sql"
-	"errors"
 	"log"
 	"os"
 
 	_ "github.com/lib/pq"
 )
 
-type PostgresAdapater struct {
-	DB *sql.DB
+type PostgresAdapter struct {
+	db *sql.DB
 }
 
-func (p *PostgresAdapater) Connect() error {
+func NewPostgresAdapter() *PostgresAdapter {
+	p := &PostgresAdapter{}
+	p.connect()
+	return p
+}
+
+func (p *PostgresAdapter) connect() {
 	connStr := os.Getenv("DB_URI")
 
 	if connStr == "" {
-		return errors.New("empty mongo db connection string")
+		log.Fatal("empty db connection string")
 	}
 
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
-		log.Println(err)
-		return err
+		log.Fatal(err)
 	}
 
-	p.DB = db
-	return nil
+	p.db = db
 }
 
-func (p *PostgresAdapater) Ping() bool {
+func (p *PostgresAdapter) Ping() bool {
 	log.Println("trying to ping database...")
-	err := p.DB.Ping()
+	err := p.db.Ping()
 	if err != nil {
 		log.Println("failed to ping db, err:", err)
 		return false
@@ -41,6 +44,6 @@ func (p *PostgresAdapater) Ping() bool {
 	return true
 }
 
-func (p *PostgresAdapater) GetDatabase() *sql.DB {
-	return p.DB
+func (p *PostgresAdapter) GetDatabase() *sql.DB {
+	return p.db
 }

@@ -6,12 +6,7 @@ import (
 )
 
 func Connect() (*entities.Adapters, error) {
-	postgres := &adapters.PostgresAdapater{}
-	if err := postgres.Connect(); err != nil {
-		return nil, err
-	}
-
 	return &entities.Adapters{
-		DB: postgres,
+		DB: adapters.NewPostgresAdapter(),
 	}, nil
 }

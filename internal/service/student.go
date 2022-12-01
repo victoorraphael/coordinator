@@ -1,31 +1,44 @@
 package service
 
-import "github.com/victoorraphael/coordinator/internal/entities"
+import (
+	"context"
+	"github.com/victoorraphael/coordinator/internal/entities"
+	"log"
+)
 
 type IStudentSRV interface {
-	Add(s entities.Student) (entities.Student, error)
-	List() ([]entities.Student, error)
-	Get(s entities.Student) (entities.Student, error)
+	Add(ctx context.Context, s entities.Student) (entities.Student, error)
+	List(ctx context.Context) ([]entities.Student, error)
+	Get(ctx context.Context, s entities.Student) (entities.Student, error)
 }
 
 func NewStudentService(adapters *entities.Adapters) IStudentSRV {
-	return &studentsrv{adapters: adapters}
+	return &student{adapters: adapters}
 }
 
-type studentsrv struct {
+type student struct {
 	adapters *entities.Adapters
 }
 
-func (srv *studentsrv) Add(s entities.Student) (entities.Student, error) {
+func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Student, error) {
+	db := srv.adapters.DB.GetDatabase()
+	stmt, err := db.PrepareContext(ctx, ``)
+	if err != nil {
+		log.Fatal(err)
+	}
+	if err := stmt.QueryRowContext(ctx).Scan(); err != nil {
+		log.Fatal(err)
+	}
 
+	return entities.Student{}, err
 }
 
-func (srv *studentsrv) List() ([]entities.Student, error) {
+func (srv *student) List(ctx context.Context) ([]entities.Student, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (srv *studentsrv) Get(s entities.Student) (entities.Student, error) {
+func (srv *student) Get(ctx context.Context, s entities.Student) (entities.Student, error) {
 	//TODO implement me
 	panic("implement me")
 }
