@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"github.com/victoorraphael/school-plus-BE/internal/adapters"
+	"github.com/victoorraphael/coordinator/internal/adapters"
 )
 
 type Adapters struct {

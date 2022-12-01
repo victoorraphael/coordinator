@@ -1,6 +1,6 @@
 package service
 
-import "github.com/victoorraphael/school-plus-BE/internal/entities"
+import "github.com/victoorraphael/coordinator/internal/entities"
 
 type IStudentSRV interface {
 	Add(s entities.Student) (entities.Student, error)

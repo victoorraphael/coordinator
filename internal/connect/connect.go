@@ -1,8 +1,8 @@
 package connect
 
 import (
-	"github.com/victoorraphael/school-plus-BE/internal/adapters"
-	"github.com/victoorraphael/school-plus-BE/internal/entities"
+	"github.com/victoorraphael/coordinator/internal/adapters"
+	"github.com/victoorraphael/coordinator/internal/entities"
 )
 
 func Connect() (*entities.Adapters, error) {

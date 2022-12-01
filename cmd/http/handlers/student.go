@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/victoorraphael/school-plus-BE/internal/entities"
-	"github.com/victoorraphael/school-plus-BE/internal/service"
+	"github.com/victoorraphael/coordinator/internal/entities"
+	"github.com/victoorraphael/coordinator/internal/service"
 	"net/http"
 
 	"github.com/google/uuid"

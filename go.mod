@@ -1,4 +1,4 @@
-module github.com/victoorraphael/school-plus-BE
+module github.com/victoorraphael/coordinator
 
 go 1.18
 

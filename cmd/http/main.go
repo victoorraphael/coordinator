@@ -4,7 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/victoorraphael/school-plus-BE/internal/service"
+	"github.com/victoorraphael/coordinator/internal/service"
 	"log"
 	"net/http"
 	"os"
@@ -14,9 +14,9 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/victoorraphael/school-plus-BE/cmd/http/handlers"
-	_ "github.com/victoorraphael/school-plus-BE/internal/adapters"
-	"github.com/victoorraphael/school-plus-BE/internal/connect"
+	"github.com/victoorraphael/coordinator/cmd/http/handlers"
+	_ "github.com/victoorraphael/coordinator/internal/adapters"
+	"github.com/victoorraphael/coordinator/internal/connect"
 )
 
 type Status struct {

@@ -2,7 +2,7 @@ package store
 
 import (
 	"errors"
-	"github.com/victoorraphael/school-plus-BE/internal/entities"
+	"github.com/victoorraphael/coordinator/internal/entities"
 )
 
 type Repository struct {
