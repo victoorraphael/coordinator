@@ -1,15 +1,15 @@
 package handlers
 
 import (
-	"github.com/victoorraphael/school-plus-BE/internal/student"
+	"github.com/victoorraphael/school-plus-BE/internal/entities"
+	"github.com/victoorraphael/school-plus-BE/internal/service"
 	"net/http"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
-	"github.com/victoorraphael/school-plus-BE/internal/contracts"
 )
 
-func StudentRoutes(e *echo.Echo, service contracts.IService[student.Student]) {
+func StudentRoutes(e *echo.Echo, service service.IStudentSRV) {
 	std := e.Group("/students")
 
 	std.Add("GET", "/", func(c echo.Context) error {
@@ -23,7 +23,7 @@ func StudentRoutes(e *echo.Echo, service contracts.IService[student.Student]) {
 	})
 }
 
-func StudentHandlerGetList(c echo.Context, s contracts.IService[student.Student]) error {
+func StudentHandlerGetList(c echo.Context, s service.IStudentSRV) error {
 	stds, err := s.List()
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
@@ -32,10 +32,10 @@ func StudentHandlerGetList(c echo.Context, s contracts.IService[student.Student]
 	return c.JSON(http.StatusOK, stds)
 }
 
-func StudentHandlerGet(c echo.Context, s contracts.IService[student.Student]) error {
+func StudentHandlerGet(c echo.Context, s service.IStudentSRV) error {
 	id := c.Param("id")
 	uid := uuid.MustParse(id)
-	studentQuery := student.New()
+	studentQuery := entities.New()
 	studentQuery.UUID = uid
 	std, err := s.Get(studentQuery)
 	if err != nil {
@@ -45,8 +45,8 @@ func StudentHandlerGet(c echo.Context, s contracts.IService[student.Student]) er
 	return c.JSON(http.StatusOK, std)
 }
 
-func StudentHandlerPost(c echo.Context, s contracts.IService[student.Student]) error {
-	var std student.Student
+func StudentHandlerPost(c echo.Context, s service.IStudentSRV) error {
+	var std entities.Student
 	if err := c.Bind(&std); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}

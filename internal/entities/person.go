@@ -1,4 +1,4 @@
-package person
+package entities
 
 import (
 	"github.com/google/uuid"
@@ -19,8 +19,8 @@ type TypePerson int
 
 const (
 	Unknown TypePerson = iota
-	Student
-	Professor
+	PersonStudent
+	PersonProfessor
 )
 
 func (p TypePerson) String() string {

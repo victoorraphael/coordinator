@@ -4,11 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/victoorraphael/school-plus-BE/internal/student"
+	"github.com/victoorraphael/school-plus-BE/internal/service"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/labstack/echo/v4"
@@ -26,17 +27,17 @@ type Status struct {
 func main() {
 	PORT := os.Getenv("PORT")
 
-	repo, _ := connect.Connect()
+	adapters, _ := connect.Connect()
 
 	e := echo.New()
-	stdService := student.New(repo)
-	handlers.StudentRoutes(e, stdService)
+	services := service.New(adapters)
+	handlers.StudentRoutes(e, services.StudentSRV())
 
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.GET("/ping", func(c echo.Context) error {
-		dbStatus := repo.DB.Ping()
+		dbStatus := adapters.DB.Ping()
 		res := Status{
 			System:   true,
 			Database: dbStatus,
@@ -66,7 +67,7 @@ func main() {
 	fmt.Printf("%s\n", data)
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
 
 	<-c
 

@@ -1,4 +1,4 @@
-package person
+package store
 
 import (
 	"errors"
@@ -17,8 +17,8 @@ var (
 	ErrTypeNotEmpty = errors.New("type of person cannot be empty")
 )
 
-func (p Repository) List(tp TypePerson) ([]Person, error) {
-	if tp == Unknown {
+func (p Repository) List(tp entities.TypePerson) ([]entities.Person, error) {
+	if tp == entities.Unknown {
 		return nil, ErrTypeNotEmpty
 	}
 
@@ -36,10 +36,10 @@ func (p Repository) List(tp TypePerson) ([]Person, error) {
 	}
 	defer rows.Close()
 
-	response := make([]Person, 0)
+	response := make([]entities.Person, 0)
 
 	for rows.Next() {
-		var p Person
+		var p entities.Person
 
 		err := rows.Scan(&p.ID, &p.Name, &p.Email, &p.Phone)
 		if err != nil {
@@ -52,17 +52,17 @@ func (p Repository) List(tp TypePerson) ([]Person, error) {
 	return response, nil
 }
 
-func (p Repository) FindOne(person Person) (Person, error) {
+func (p Repository) FindOne(person entities.Person) (entities.Person, error) {
 	panic("implement me")
 }
 
-func (p Repository) Add(person Person) (int64, error) {
+func (p Repository) Add(person entities.Person) (int64, error) {
 	sql := `
 	INSERT INTO persons (name, email, phone)
 	VALUES ($1, $2, $3)
 	RETURNING id
 	`
-	var response Person
+	var response entities.Person
 
 	err := p.Adapters.DB.
 		GetDatabase().
@@ -76,10 +76,10 @@ func (p Repository) Add(person Person) (int64, error) {
 	return response.ID, nil
 }
 
-func (p Repository) Update(person Person) error {
+func (p Repository) Update(person entities.Person) error {
 	panic("implement me")
 }
 
-func (p Repository) Delete(person Person) error {
+func (p Repository) Delete(person entities.Person) error {
 	panic("implement me")
 }
