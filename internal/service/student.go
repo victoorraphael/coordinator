@@ -11,6 +11,7 @@ type IStudentSRV interface {
 	Add(ctx context.Context, s entities.Student) (entities.Student, error)
 	List(ctx context.Context) ([]entities.Student, error)
 	Get(ctx context.Context, s entities.Student) (entities.Student, error)
+	Delete(ctx context.Context, s entities.Student) error
 }
 
 func NewStudentService(store *store.Store) IStudentSRV {
@@ -19,6 +20,11 @@ func NewStudentService(store *store.Store) IStudentSRV {
 
 type student struct {
 	store *store.Store
+}
+
+func (srv *student) Delete(ctx context.Context, s entities.Student) error {
+	//TODO implement me
+	panic("implement me")
 }
 
 func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Student, error) {

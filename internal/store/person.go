@@ -11,10 +11,10 @@ type personStore struct {
 	adapters *entities.Adapters
 }
 
-func (s *personStore) List(_ context.Context, person entities.Person) ([]entities.Person, error) {
+func (s *personStore) List(ctx context.Context, person entities.Person) ([]entities.Person, error) {
 	db := s.adapters.DB.GetDatabase()
 	query := "SELECT uuid, name, email, phone, birthdate, type FROM persons WHERE type = $1"
-	rows, err := db.Query(query, person.Type)
+	rows, err := db.QueryContext(ctx, query, person.Type)
 	if err != nil {
 		log.Println("ERROR", err)
 		return nil, err
@@ -35,10 +35,10 @@ func (s *personStore) List(_ context.Context, person entities.Person) ([]entitie
 	return persons, nil
 }
 
-func (s *personStore) Add(_ context.Context, person entities.Person) (entities.Person, error) {
+func (s *personStore) Add(ctx context.Context, person entities.Person) (entities.Person, error) {
 	db := s.adapters.DB.GetDatabase()
 	query := "INSERT INTO persons (name, email, phone, birthdate, type) VALUES ($1, $2, $3, $4, $5) RETURNING uuid"
-	err := db.QueryRow(query, person.Name, person.Email, person.Phone, person.Birthdate, person.Type).
+	err := db.QueryRowContext(ctx, query, person.Name, person.Email, person.Phone, person.Birthdate, person.Type).
 		Scan(&person.UUID)
 	if err != nil {
 		return entities.Person{}, err
