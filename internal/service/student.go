@@ -3,7 +3,7 @@ package service
 import (
 	"context"
 	"github.com/victoorraphael/coordinator/internal/entities"
-	"log"
+	"github.com/victoorraphael/coordinator/internal/store"
 )
 
 type IStudentSRV interface {
@@ -12,25 +12,16 @@ type IStudentSRV interface {
 	Get(ctx context.Context, s entities.Student) (entities.Student, error)
 }
 
-func NewStudentService(adapters *entities.Adapters) IStudentSRV {
-	return &student{adapters: adapters}
+func NewStudentService(store *store.Store) IStudentSRV {
+	return &student{store: store}
 }
 
 type student struct {
-	adapters *entities.Adapters
+	store *store.Store
 }
 
 func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Student, error) {
-	db := srv.adapters.DB.GetDatabase()
-	stmt, err := db.PrepareContext(ctx, ``)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if err := stmt.QueryRowContext(ctx).Scan(); err != nil {
-		log.Fatal(err)
-	}
-
-	return entities.Student{}, err
+	return entities.Student{}, nil
 }
 
 func (srv *student) List(ctx context.Context) ([]entities.Student, error) {
