@@ -10,7 +10,8 @@ type Store struct {
 
 // New returns an instance of Store with instances of all individuals stores
 func New(adapters *entities.Adapters) *Store {
+	person := personStore{adapters: adapters}
 	return &Store{
-		Student: studentStore{adapters: adapters},
+		Student: studentStore{adapters: adapters, person: person},
 	}
 }

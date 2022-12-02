@@ -2,7 +2,6 @@ package entities
 
 import (
 	"github.com/google/uuid"
-	"time"
 )
 
 type Person struct {
@@ -11,7 +10,7 @@ type Person struct {
 	Name      string     `json:"name" db:"name"`
 	Email     string     `json:"email" db:"email"`
 	Phone     string     `json:"phone" db:"phone"`
-	Birthdate time.Time  `json:"birthdate" db:"birthdate"`
+	Birthdate string     `json:"birthdate" db:"birthdate"`
 	Type      TypePerson `json:"type" db:"type"`
 }
 
