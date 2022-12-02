@@ -25,8 +25,7 @@ func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Stude
 }
 
 func (srv *student) List(ctx context.Context) ([]entities.Student, error) {
-	//TODO implement me
-	panic("implement me")
+	return srv.store.Student.List(ctx)
 }
 
 func (srv *student) Get(ctx context.Context, s entities.Student) (entities.Student, error) {

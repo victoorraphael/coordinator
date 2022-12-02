@@ -20,9 +20,9 @@ func StudentRoutes(e *echo.Echo, service service.IStudentSRV) {
 }
 
 func StudentHandlerGetList(c echo.Context, s service.IStudentSRV) error {
-	stds, err := s.List()
+	stds, err := s.List(context.Background())
 	if err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		return c.String(http.StatusInternalServerError, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, stds)

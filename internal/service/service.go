@@ -16,4 +16,4 @@ func New(s *store.Store) Service {
 	return &service{student: NewStudentService(s)}
 }
 
-func (s service) StudentSRV() IStudentSRV { return s.StudentSRV() }
+func (s service) StudentSRV() IStudentSRV { return s.student }
