@@ -33,7 +33,6 @@ tasks:
     desc: run migrations on database
     cmds:
       - migrate -database ${DB_URI} -path db/migrations up
-
   migrate-down:
     desc: remove migrations on database
     cmds:
