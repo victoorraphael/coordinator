@@ -22,6 +22,13 @@ tasks:
       - docker-compose down
       - echo "Done! 👋🏼"
 
+  setup:
+    desc: setup environment to first run
+    cmds:
+      - task: db
+      - task: migrate-up
+      - task: run
+
   migrate-up:
     desc: run migrations on database
     cmds:
