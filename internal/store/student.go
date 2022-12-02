@@ -33,3 +33,13 @@ func (s *studentStore) Add(ctx context.Context, std entities.Student) (entities.
 	student.Person = p
 	return student, nil
 }
+
+func (s *studentStore) FindByEmail(ctx context.Context, student entities.Student) (entities.Student, error) {
+	person, err := s.person.FindByField(ctx, "email", student.Email)
+	return entities.Student{Person: person}, err
+}
+
+func (s *studentStore) FindByUUID(ctx context.Context, student entities.Student) (entities.Student, error) {
+	person, err := s.person.FindByField(ctx, "uuid", student.UUID)
+	return entities.Student{Person: person}, err
+}

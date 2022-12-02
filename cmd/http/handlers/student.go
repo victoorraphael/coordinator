@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/victoorraphael/coordinator/internal/entities"
 	"github.com/victoorraphael/coordinator/internal/service"
+	"log"
 	"net/http"
 	"time"
 
@@ -33,6 +34,7 @@ func StudentHandlerGet(c echo.Context, s service.IStudentSRV) error {
 	if id == "" {
 		c.String(http.StatusBadRequest, "id should not be empty!")
 	}
+	log.Println("info: trying to find student with uuid:", id)
 	uid := uuid.MustParse(id)
 	studentQuery := entities.NewStudent()
 	studentQuery.UUID = uid

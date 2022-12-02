@@ -5,7 +5,6 @@ import (
 	"errors"
 	"github.com/victoorraphael/coordinator/internal/entities"
 	"github.com/victoorraphael/coordinator/internal/store"
-	"time"
 )
 
 type IStudentSRV interface {
@@ -36,13 +35,17 @@ func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Stude
 		return res, errors.New("wrong type")
 	}
 
-	if s.Birthdate == "" {
+	if s.Birthdate.IsZero() {
 		return res, errors.New("birthdate cannot be empty")
 	}
 
-	_, err := time.Parse("2006-01-02", s.Birthdate)
+	student, err := srv.store.Student.FindByEmail(ctx, s)
 	if err != nil {
 		return res, err
+	}
+
+	if student.UUID.String() != "" {
+		return res, errors.New("student already exists")
 	}
 
 	std, err := srv.store.Student.Add(ctx, s)
@@ -57,6 +60,5 @@ func (srv *student) List(ctx context.Context) ([]entities.Student, error) {
 }
 
 func (srv *student) Get(ctx context.Context, s entities.Student) (entities.Student, error) {
-	//TODO implement me
-	panic("implement me")
+	return srv.store.Student.FindByUUID(ctx, s)
 }

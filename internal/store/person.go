@@ -2,10 +2,9 @@ package store
 
 import (
 	"context"
-	"github.com/google/uuid"
+	"fmt"
 	"github.com/victoorraphael/coordinator/internal/entities"
 	"log"
-	"time"
 )
 
 type personStore struct {
@@ -38,14 +37,22 @@ func (s *personStore) List(_ context.Context, person entities.Person) ([]entitie
 
 func (s *personStore) Add(_ context.Context, person entities.Person) (entities.Person, error) {
 	db := s.adapters.DB.GetDatabase()
-	bday, _ := time.Parse(time.RFC3339, person.Birthdate)
 	query := "INSERT INTO persons (name, email, phone, birthdate, type) VALUES ($1, $2, $3, $4, $5) RETURNING uuid"
-	var uuidQuery string
-	err := db.QueryRow(query, person.Name, person.Email, person.Phone, bday, person.Type).Scan(&uuidQuery)
+	err := db.QueryRow(query, person.Name, person.Email, person.Phone, person.Birthdate, person.Type).
+		Scan(&person.UUID)
 	if err != nil {
 		return entities.Person{}, err
 	}
 
-	uid := uuid.MustParse(uuidQuery)
-	return entities.Person{UUID: uid}, nil
+	return person, nil
+}
+
+func (s *personStore) FindByField(ctx context.Context, field string, value any) (entities.Person, error) {
+	db := s.adapters.DB.GetDatabase()
+	query := fmt.Sprintf("SELECT uuid, name, email, phone, birthdate, type FROM persons WHERE %s = $1", field)
+	res := entities.Person{}
+	err := db.QueryRowContext(ctx, query, value).
+		Scan(&res.UUID, &res.Name, &res.Email, &res.Phone, &res.Birthdate, &res.Type)
+
+	return res, err
 }
