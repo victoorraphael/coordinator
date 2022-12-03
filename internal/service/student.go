@@ -12,6 +12,7 @@ type IStudentSRV interface {
 	List(ctx context.Context) ([]entities.Student, error)
 	Get(ctx context.Context, s entities.Student) (entities.Student, error)
 	Delete(ctx context.Context, s entities.Student) error
+	Update(ctx context.Context, s entities.Student) error
 }
 
 func NewStudentService(store *store.Store) IStudentSRV {
@@ -20,6 +21,15 @@ func NewStudentService(store *store.Store) IStudentSRV {
 
 type student struct {
 	store *store.Store
+}
+
+func (srv *student) Update(ctx context.Context, s entities.Student) error {
+	_, err := srv.store.Student.FindByUUID(ctx, s)
+	if err != nil {
+		return err
+	}
+
+	return srv.store.Student.Update(ctx, s)
 }
 
 func (srv *student) Delete(ctx context.Context, s entities.Student) error {

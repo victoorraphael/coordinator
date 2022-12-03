@@ -47,3 +47,7 @@ func (s *studentStore) FindByUUID(ctx context.Context, student entities.Student)
 func (s *studentStore) Delete(ctx context.Context, student entities.Student) error {
 	return s.person.Delete(ctx, student)
 }
+
+func (s *studentStore) Update(ctx context.Context, student entities.Student) error {
+	return s.person.Update(ctx, student)
+}

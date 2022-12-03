@@ -62,3 +62,11 @@ func (s *personStore) Delete(ctx context.Context, student entities.Student) erro
 	_, err := db.ExecContext(ctx, "DELETE FROM persons WHERE uuid = $1", student.UUID)
 	return err
 }
+
+func (s *personStore) Update(ctx context.Context, student entities.Student) error {
+	db := s.adapters.DB.GetDatabase()
+	query := "UPDATE persons SET name = $1, email = $2, phone = $3 WHERE uuid = $4"
+	log.Println("PERSON", student)
+	_, err := db.ExecContext(ctx, query, student.Name, student.Email, student.Phone, student.UUID)
+	return err
+}
