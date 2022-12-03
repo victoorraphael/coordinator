@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"github.com/victoorraphael/coordinator/internal/entities"
 	"github.com/victoorraphael/coordinator/internal/service"
 	"log"
@@ -18,6 +20,7 @@ func StudentRoutes(e *echo.Echo, service service.IStudentSRV) {
 	std.Add("GET", "/", func(c echo.Context) error { return StudentHandlerGetList(c, service) })
 	std.Add("GET", "/:id/", func(c echo.Context) error { return StudentHandlerGet(c, service) })
 	std.Add("POST", "/", func(c echo.Context) error { return StudentHandlerPost(c, service) })
+	std.Add("DELETE", "/:id/", func(c echo.Context) error { return StudentHandlerDelete(c, service) })
 }
 
 func StudentHandlerGetList(c echo.Context, s service.IStudentSRV) error {
@@ -61,4 +64,26 @@ func StudentHandlerPost(c echo.Context, s service.IStudentSRV) error {
 	}
 
 	return c.JSON(http.StatusOK, data)
+}
+
+func StudentHandlerDelete(c echo.Context, s service.IStudentSRV) error {
+	id := c.Param("id")
+	if id == "" {
+		c.String(http.StatusBadRequest, "id should not be empty!")
+	}
+	uid := uuid.MustParse(id)
+	studentQuery := entities.NewStudent()
+	studentQuery.UUID = uid
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	err := s.Delete(ctx, studentQuery)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return c.String(http.StatusBadRequest, fmt.Sprintf("student with id: %s does not exists", uid))
+		}
+		return c.String(http.StatusInternalServerError, err.Error())
+	}
+
+	return c.JSON(http.StatusOK, map[string]string{"message": "successfully deleted"})
 }

@@ -23,8 +23,12 @@ type student struct {
 }
 
 func (srv *student) Delete(ctx context.Context, s entities.Student) error {
-	//TODO implement me
-	panic("implement me")
+	_, err := srv.store.Student.FindByUUID(ctx, s)
+	if err != nil {
+		return err
+	}
+
+	return srv.store.Student.Delete(ctx, s)
 }
 
 func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Student, error) {

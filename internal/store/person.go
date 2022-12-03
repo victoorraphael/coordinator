@@ -56,3 +56,9 @@ func (s *personStore) FindByField(ctx context.Context, field string, value any) 
 
 	return res, err
 }
+
+func (s *personStore) Delete(ctx context.Context, student entities.Student) error {
+	db := s.adapters.DB.GetDatabase()
+	_, err := db.ExecContext(ctx, "DELETE FROM persons WHERE uuid = $1", student.UUID)
+	return err
+}

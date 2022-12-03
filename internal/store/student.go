@@ -43,3 +43,7 @@ func (s *studentStore) FindByUUID(ctx context.Context, student entities.Student)
 	person, err := s.person.FindByField(ctx, "uuid", student.UUID)
 	return entities.Student{Person: person}, err
 }
+
+func (s *studentStore) Delete(ctx context.Context, student entities.Student) error {
+	return s.person.Delete(ctx, student)
+}
