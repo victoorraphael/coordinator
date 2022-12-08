@@ -2,7 +2,9 @@ package service
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	"github.com/google/uuid"
 	"github.com/victoorraphael/coordinator/internal/entities"
 	"github.com/victoorraphael/coordinator/internal/store"
 )
@@ -60,11 +62,11 @@ func (srv *student) Add(ctx context.Context, s entities.Student) (entities.Stude
 	}
 
 	student, err := srv.store.Student.FindByEmail(ctx, s)
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return res, err
 	}
 
-	if student.UUID.String() != "" {
+	if student.UUID != uuid.Nil {
 		return res, errors.New("student already exists")
 	}
 
