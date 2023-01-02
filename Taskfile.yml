@@ -38,6 +38,9 @@ tasks:
     cmds:
       - migrate -database ${DB_URI} -path db/migrations down
 
+  force:
+    cmds:
+      - migrate -database ${DB_URI} -path db/migrations force {{.CLI_ARGS}}
   create-table:
     desc: create a new table to be available on migration-up
     cmds:
