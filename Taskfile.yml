@@ -2,7 +2,8 @@ version: '3'
 
 env:
   PORT: 8080
-  DB_URI: postgres://jlsfrbek:41YTk-sbD-OIQyz7Odh9E7BIksrvHhu0@babar.db.elephantsql.com:5432/jlsfrbek
+  #DB_URI: postgres://jlsfrbek:41YTk-sbD-OIQyz7Odh9E7BIksrvHhu0@babar.db.elephantsql.com:5432/jlsfrbek
+  DB_URI: postgres://root:secret@localhost:5454/schoolplus?sslmode=disable
 
 tasks:
   run:
@@ -38,10 +39,11 @@ tasks:
     cmds:
       - migrate -database ${DB_URI} -path db/migrations down
 
-  force:
-    cmds:
-      - migrate -database ${DB_URI} -path db/migrations force {{.CLI_ARGS}}
   create-table:
     desc: create a new table to be available on migration-up
     cmds:
       - migrate create -ext sql -dir db/migrations -seq {{.CLI_ARGS}}
+  force:
+    desc: reset migrations state to version specified
+    cmds:
+      - migrate -database ${DB_URI} -path db/migrations force {{.CLI_ARGS}}
