@@ -6,7 +6,8 @@ ENV GO111MODULE=on \
     GOOS=linux \
     GOARCH=amd64 \
     PORT=8080 \
-    DB_URI="postgres://jlsfrbek:41YTk-sbD-OIQyz7Odh9E7BIksrvHhu0@babar.db.elephantsql.com/jlsfrbek"
+#    DB_URI="postgres://jlsfrbek:41YTk-sbD-OIQyz7Odh9E7BIksrvHhu0@babar.db.elephantsql.com/jlsfrbek"
+     DB_URI="postgres://root:secret@localhost:5454/schoolplus?sslmode=disable"
 
 # Move to working directory /build
 WORKDIR /build
