@@ -39,7 +39,7 @@ func main() {
 	services := service.New(s)
 	handlers.StudentRoutes(e, services.StudentSRV())
 
-	e.Use(middleware.Logger())
+	//e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.GET("/ping", func(c echo.Context) error {

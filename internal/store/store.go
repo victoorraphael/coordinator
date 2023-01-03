@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/victoorraphael/coordinator/internal/entities"
+	"github.com/victoorraphael/coordinator/internal/adapters"
 )
 
 type Store struct {
@@ -9,7 +9,7 @@ type Store struct {
 }
 
 // New returns an instance of Store with instances of all individuals stores
-func New(adapters *entities.Adapters) *Store {
+func New(adapters *adapters.Adapters) *Store {
 	person := personStore{adapters: adapters}
 	return &Store{
 		Student: studentStore{adapters: adapters, person: person},

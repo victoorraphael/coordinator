@@ -4,8 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"github.com/victoorraphael/coordinator/internal/entities"
 	"github.com/victoorraphael/coordinator/internal/service"
+	"github.com/victoorraphael/coordinator/internal/student"
 	"log"
 	"net/http"
 	"time"
@@ -36,11 +36,11 @@ func StudentHandlerGetList(c echo.Context, s service.IStudentSRV) error {
 func StudentHandlerGet(c echo.Context, s service.IStudentSRV) error {
 	id := c.Param("id")
 	if id == "" {
-		c.String(http.StatusBadRequest, "id should not be empty!")
+		return c.String(http.StatusBadRequest, "id should not be empty!")
 	}
 	log.Println("info: trying to find student with uuid:", id)
 	uid := uuid.MustParse(id)
-	studentQuery := entities.NewStudent()
+	studentQuery := student.NewStudent()
 	studentQuery.UUID = uid
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -53,7 +53,7 @@ func StudentHandlerGet(c echo.Context, s service.IStudentSRV) error {
 }
 
 func StudentHandlerPost(c echo.Context, s service.IStudentSRV) error {
-	var std entities.Student
+	var std student.Student
 	if err := c.Bind(&std); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
@@ -70,10 +70,10 @@ func StudentHandlerPost(c echo.Context, s service.IStudentSRV) error {
 func StudentHandlerDelete(c echo.Context, s service.IStudentSRV) error {
 	id := c.Param("id")
 	if id == "" {
-		c.String(http.StatusBadRequest, "id should not be empty!")
+		return c.String(http.StatusBadRequest, "id should not be empty!")
 	}
 	uid := uuid.MustParse(id)
-	studentQuery := entities.NewStudent()
+	studentQuery := student.NewStudent()
 	studentQuery.UUID = uid
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
@@ -92,10 +92,10 @@ func StudentHandlerDelete(c echo.Context, s service.IStudentSRV) error {
 func StudentHandlerUpdate(c echo.Context, s service.IStudentSRV) error {
 	id := c.Param("id")
 	if id == "" {
-		c.String(http.StatusBadRequest, "id should not be empty!")
+		return c.String(http.StatusBadRequest, "id should not be empty!")
 	}
 
-	var std entities.Student
+	var std student.Student
 	if err := c.Bind(&std); err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}

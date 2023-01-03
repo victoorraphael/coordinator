@@ -3,12 +3,14 @@ package store
 import (
 	"context"
 	"fmt"
+	"github.com/victoorraphael/coordinator/internal/adapters"
 	"github.com/victoorraphael/coordinator/internal/entities"
+	"github.com/victoorraphael/coordinator/internal/student"
 	"log"
 )
 
 type personStore struct {
-	adapters *entities.Adapters
+	adapters *adapters.Adapters
 }
 
 func (s *personStore) List(ctx context.Context, person entities.Person) ([]entities.Person, error) {
@@ -57,13 +59,13 @@ func (s *personStore) FindByField(ctx context.Context, field string, value any) 
 	return res, err
 }
 
-func (s *personStore) Delete(ctx context.Context, student entities.Student) error {
+func (s *personStore) Delete(ctx context.Context, student student.Student) error {
 	db := s.adapters.DB.GetDatabase()
 	_, err := db.ExecContext(ctx, "DELETE FROM persons WHERE uuid = $1", student.UUID)
 	return err
 }
 
-func (s *personStore) Update(ctx context.Context, student entities.Student) error {
+func (s *personStore) Update(ctx context.Context, student student.Student) error {
 	db := s.adapters.DB.GetDatabase()
 	query := "UPDATE persons SET name = $1, email = $2, phone = $3 WHERE uuid = $4"
 	log.Println("PERSON", student)

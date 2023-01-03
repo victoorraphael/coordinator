@@ -1,4 +1,4 @@
-package entities
+package professor
 
 import (
 	"github.com/google/uuid"
