@@ -1,11 +1,11 @@
 package professor
 
 import (
-	"github.com/google/uuid"
+	"github.com/victoorraphael/coordinator/internal/person"
+	"github.com/victoorraphael/coordinator/internal/school"
 )
 
 type Professor struct {
-	ID uuid.UUID `json:"id"`
-	Person
-	Specialization string `json:"specialization"`
+	School school.School `json:"school"`
+	person.Person
 }

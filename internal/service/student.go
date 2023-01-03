@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/google/uuid"
-	"github.com/victoorraphael/coordinator/internal/entities"
+	"github.com/victoorraphael/coordinator/internal/person"
 	"github.com/victoorraphael/coordinator/internal/store"
 	student2 "github.com/victoorraphael/coordinator/internal/student"
 )
@@ -54,7 +54,7 @@ func (srv *student) Add(ctx context.Context, s student2.Student) (student2.Stude
 		return res, errors.New("email cannot be empty")
 	}
 
-	if s.Type != entities.PersonStudent {
+	if s.Type != person.Student {
 		return res, errors.New("wrong type")
 	}
 
