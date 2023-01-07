@@ -1,19 +1,20 @@
 package service
 
 import (
-	"github.com/victoorraphael/coordinator/internal/store"
+	"github.com/victoorraphael/coordinator/internal/adapters"
+	"github.com/victoorraphael/coordinator/internal/student"
 )
 
 type Service interface {
-	StudentSRV() IStudentSRV
+	Student() student.Service
 }
 
 type service struct {
-	student IStudentSRV
+	student student.Service
 }
 
-func New(s *store.Store) Service {
-	return &service{student: NewStudentService(s)}
+func New(adapters *adapters.Adapters) Service {
+	return &service{student: student.NewService(adapters)}
 }
 
-func (s service) StudentSRV() IStudentSRV { return s.student }
+func (s service) Student() student.Service { return s.student }

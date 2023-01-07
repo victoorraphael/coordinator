@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/victoorraphael/coordinator/internal/store"
 	"log"
 	"net/http"
 	"os"
@@ -35,9 +34,8 @@ func main() {
 	}()
 
 	e := echo.New()
-	s := store.New(adapters)
-	services := service.New(s)
-	handlers.StudentRoutes(e, services.StudentSRV())
+	services := service.New(adapters)
+	handlers.StudentRoutes(e, services.Student())
 
 	//e.Use(middleware.Logger())
 	e.Use(middleware.Recover())

@@ -1,17 +1,19 @@
 package student
 
+import "context"
+
 type Repository interface {
-	Find(schoolID int, classroomID int) ([]Student, error)
-	FindUUID(uuid string) (Student, error)
-	Create(student Student) (Student, error)
-	Update(student Student) error
-	Delete(uuid string) error
+	Find(ctx context.Context, schoolID int, classroomsID ...int) ([]Student, error)
+	FindUUID(ctx context.Context, uuid string) (Student, error)
+	Create(ctx context.Context, student Student) (Student, error)
+	Update(ctx context.Context, student Student) error
+	Delete(ctx context.Context, uuid string) error
 }
 
 type Service interface {
-	List(schoolID int, classroomID int) ([]Student, error)
-	Get(uuid string) (Student, error)
-	Create(student Student) (Student, error)
-	Update(student Student) error
-	Delete(uuid string) error
+	List(ctx context.Context, schoolID int, classroomID int) ([]Student, error)
+	Get(ctx context.Context, uuid string) (Student, error)
+	Create(ctx context.Context, student Student) (Student, error)
+	Update(ctx context.Context, student Student) error
+	Delete(ctx context.Context, uuid string) error
 }
