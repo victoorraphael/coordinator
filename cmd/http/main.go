@@ -77,7 +77,7 @@ func main() {
 	defer cancel()
 
 	_ = srv.Shutdown(ctx)
-	log.Println("shutting down! 👋🏼")
+	log.Println("shutting down! 👋")
 
 	os.Exit(0)
 }

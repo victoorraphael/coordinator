@@ -1,6 +1,13 @@
 package handlers
 
-import "github.com/labstack/echo/v4"
+import (
+	"github.com/labstack/echo/v4"
+	"time"
+)
+
+const (
+	DefaultTimeHandler = 5 * time.Second
+)
 
 type Handlers interface {
 	Routes(*echo.Echo)

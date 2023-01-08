@@ -4,13 +4,14 @@ import (
 	"context"
 	"github.com/labstack/echo/v4"
 	"github.com/victoorraphael/coordinator/internal/adapters/repository"
+	"github.com/victoorraphael/coordinator/internal/application/services"
 	"github.com/victoorraphael/coordinator/internal/domain"
+	"log"
 	"net/http"
-	"time"
 )
 
 var (
-	studentRepository = repository.Student{}
+	studentRepository = repository.Person{}
 )
 
 type StudentHandler struct{}
@@ -26,10 +27,10 @@ func (s *StudentHandler) Routes(e *echo.Echo) {
 }
 
 func (s *StudentHandler) List(c echo.Context) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeHandler)
 	defer cancel()
-	list, _ := studentRepository.Find(ctx, 0, 0)
-	return c.JSON(http.StatusOK, map[string][]domain.Student{"message": list})
+	list, _ := services.ListPerson(ctx, &studentRepository)
+	return c.JSON(http.StatusOK, list)
 }
 
 func (s *StudentHandler) Get(c echo.Context) error {
@@ -37,7 +38,20 @@ func (s *StudentHandler) Get(c echo.Context) error {
 }
 
 func (s *StudentHandler) Create(c echo.Context) error {
-	return c.JSON(http.StatusOK, map[string]string{"message": "create"})
+	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeHandler)
+	defer cancel()
+	student := &domain.Student{}
+	if err := c.Bind(student); err != nil {
+		return c.String(http.StatusBadRequest, "invalid payload")
+	}
+
+	uid, err := services.CreatePerson(ctx, &studentRepository, student)
+	if err != nil {
+		log.Println("error: ", err.Error())
+		return c.String(http.StatusInternalServerError, "internal error")
+	}
+
+	return c.JSON(http.StatusCreated, map[string]interface{}{"uuid": uid})
 }
 
 func (s *StudentHandler) Delete(c echo.Context) error {

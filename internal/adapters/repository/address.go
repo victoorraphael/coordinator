@@ -9,11 +9,11 @@ import (
 
 type Address struct{}
 
-func (a Address) Find(ctx context.Context, field string, data any) (domain.Address, error) {
+func (a Address) Find(ctx context.Context, id int) (domain.Address, error) {
 	db := postgres.NewPostgresAdapter().GetDatabase()
-	query := fmt.Sprintf("SELECT street, city, zip, number FROM address WHERE %s = $1", field)
+	query := fmt.Sprintf("SELECT street, city, zip, number FROM address WHERE id = $1")
 	resp := domain.Address{}
-	err := db.QueryRowContext(ctx, query, data).
+	err := db.QueryRowContext(ctx, query, id).
 		Scan(&resp.Street, &resp.City, &resp.Zip, &resp.Number)
 
 	return resp, err

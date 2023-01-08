@@ -2,25 +2,24 @@ package postgres
 
 import (
 	"database/sql"
+	_ "github.com/lib/pq"
 	"log"
 	"os"
-
-	_ "github.com/lib/pq"
 )
 
-type PostgresAdapter struct {
+type Adapter struct {
 	db *sql.DB
 }
 
-func NewPostgresAdapter() *PostgresAdapter {
-	p := &PostgresAdapter{}
+func NewPostgresAdapter() *Adapter {
+	p := &Adapter{}
 	//TODO include pool of resources instead of connect every time
 	p.connect()
 	return p
 }
 
 // connect try to connect DB with environment variable
-func (p *PostgresAdapter) connect() {
+func (p *Adapter) connect() {
 	connStr := os.Getenv("DB_URI")
 
 	if connStr == "" {
@@ -36,7 +35,7 @@ func (p *PostgresAdapter) connect() {
 }
 
 // Ping try to ping database
-func (p *PostgresAdapter) Ping() bool {
+func (p *Adapter) Ping() bool {
 	log.Println("trying to ping database...")
 	err := p.db.Ping()
 	if err != nil {
@@ -48,6 +47,6 @@ func (p *PostgresAdapter) Ping() bool {
 }
 
 // GetDatabase returns *sql.DB instance
-func (p *PostgresAdapter) GetDatabase() *sql.DB {
+func (p *Adapter) GetDatabase() *sql.DB {
 	return p.db
 }

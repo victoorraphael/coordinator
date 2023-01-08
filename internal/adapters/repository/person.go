@@ -2,15 +2,17 @@ package repository
 
 import (
 	"context"
-	"fmt"
+	"github.com/google/uuid"
 	"github.com/victoorraphael/coordinator/internal/adapters/postgres"
+	"github.com/victoorraphael/coordinator/internal/adapters/postgres/models"
 	"github.com/victoorraphael/coordinator/internal/domain"
 	"log"
 )
 
 type Person struct{}
 
-func (p *Person) List(ctx context.Context, person domain.Person) ([]domain.Person, error) {
+// List all persons from type domain.Person.Type
+func (p *Person) List(ctx context.Context, person models.Person) ([]domain.Person, error) {
 	db := postgres.NewPostgresAdapter().GetDatabase()
 	query := "SELECT uuid, name, email, phone, birthdate, type FROM persons WHERE type = $1"
 	rows, err := db.QueryContext(ctx, query, person.Type)
@@ -34,38 +36,29 @@ func (p *Person) List(ctx context.Context, person domain.Person) ([]domain.Perso
 	return persons, nil
 }
 
-func (p *Person) Add(ctx context.Context, person domain.Person) (domain.Person, error) {
+// Add a new person
+func (p *Person) Add(ctx context.Context, person models.Person) (uuid.UUID, error) {
 	db := postgres.NewPostgresAdapter().GetDatabase()
+	var respUUID uuid.UUID
 	query := "INSERT INTO persons (name, email, phone, birthdate, type, address_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING uuid"
-	err := db.QueryRowContext(ctx, query, person.Name, person.Email, person.Phone, person.Birthdate, person.Type, person.Address.ID).
-		Scan(&person.UUID)
-	if err != nil {
-		return domain.Person{}, err
-	}
+	err := db.QueryRowContext(ctx, query, person.Name, person.Email, person.Phone, person.Birthdate, person.Type,
+		person.AddressID).
+		Scan(&respUUID)
 
-	return person, nil
+	return respUUID, err
 }
 
-func (p *Person) FindByField(ctx context.Context, field string, value any) (domain.Person, error) {
+// Delete a person based on uuid
+func (p *Person) Delete(ctx context.Context, person models.Person) error {
 	db := postgres.NewPostgresAdapter().GetDatabase()
-	query := fmt.Sprintf("SELECT uuid, name, email, phone, birthdate, type, address_id FROM persons WHERE %s = $1", field)
-	res := domain.Person{}
-	err := db.QueryRowContext(ctx, query, value).
-		Scan(&res.UUID, &res.Name, &res.Email, &res.Phone, &res.Birthdate, &res.Type, &res.Address.ID)
-
-	return res, err
-}
-
-func (p *Person) Delete(ctx context.Context, student domain.Student) error {
-	db := postgres.NewPostgresAdapter().GetDatabase()
-	_, err := db.ExecContext(ctx, "DELETE FROM persons WHERE uuid = $1", student.UUID)
+	_, err := db.ExecContext(ctx, "DELETE FROM persons WHERE uuid = $1", person.UUID)
 	return err
 }
 
-func (p *Person) Update(ctx context.Context, student domain.Student) error {
+// Update a person based on uuid
+func (p *Person) Update(ctx context.Context, person models.Person) error {
 	db := postgres.NewPostgresAdapter().GetDatabase()
 	query := "UPDATE persons SET name = $1, email = $2, phone = $3 WHERE uuid = $4"
-	log.Println("PERSON", student)
-	_, err := db.ExecContext(ctx, query, student.Name, student.Email, student.Phone, student.UUID)
+	_, err := db.ExecContext(ctx, query, person.Name, person.Email, person.Phone, person.UUID)
 	return err
 }

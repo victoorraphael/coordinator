@@ -7,26 +7,27 @@ import (
 )
 
 type Person struct {
-	ID        int64
-	UUID      uuid.UUID
-	Name      string
-	Email     string
-	Phone     string
-	Birthdate time.Time
-	Type      Type
-	Address   Address
+	ID        int64      `json:"id,omitempty"`
+	UUID      uuid.UUID  `json:"uuid,omitempty"`
+	Name      string     `json:"name,omitempty"`
+	Email     string     `json:"email,omitempty"`
+	Phone     string     `json:"phone,omitempty"`
+	Birthdate time.Time  `json:"birthdate"`
+	Type      PersonType `json:"type,omitempty"`
+	Address   Address    `json:"address"`
+	School    School     `json:"school"`
 }
 
-// Type represents type of persons on system
-type Type int
+// PersonType represents type of persons on system
+type PersonType int
 
 const (
-	PersonStudent Type = iota + 1
+	PersonStudent PersonType = iota + 1
 	PersonProfessor
 )
 
 // String returns representative string of person type
-func (p Type) String() string {
+func (t PersonType) String() string {
 	names := []string{"student", "professor"}
-	return names[p-1]
+	return names[t-1]
 }
