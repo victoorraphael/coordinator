@@ -3,7 +3,7 @@ package student
 import (
 	"context"
 	"github.com/victoorraphael/coordinator/internal/adapters"
-	"github.com/victoorraphael/coordinator/internal/address"
+	"github.com/victoorraphael/coordinator/internal/domain"
 	"github.com/victoorraphael/coordinator/internal/person"
 )
 
@@ -22,7 +22,7 @@ func (s *store) FindUUID(ctx context.Context, uuid string) (Student, error) {
 		return Student{}, err
 	}
 
-	std := NewStudent(address.Address{})
+	std := NewStudent(domain.Address{})
 	std.Person = p
 	return *std, nil
 }
