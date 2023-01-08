@@ -1,4 +1,4 @@
-package adapters
+package postgres
 
 import (
 	"database/sql"
@@ -12,8 +12,9 @@ type PostgresAdapter struct {
 	db *sql.DB
 }
 
-func NewPostgresAdapter() DBAdapter {
+func NewPostgresAdapter() *PostgresAdapter {
 	p := &PostgresAdapter{}
+	//TODO include pool of resources instead of connect every time
 	p.connect()
 	return p
 }

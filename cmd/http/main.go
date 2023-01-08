@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/victoorraphael/coordinator/internal/adapters/handlers"
+	"github.com/victoorraphael/coordinator/internal/adapters/postgres"
 	"log"
 	"net/http"
 	"os"
@@ -13,10 +15,6 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/victoorraphael/coordinator/cmd/http/handlers"
-	_ "github.com/victoorraphael/coordinator/internal/adapters"
-	"github.com/victoorraphael/coordinator/internal/connect"
-	"github.com/victoorraphael/coordinator/internal/service"
 )
 
 type Status struct {
@@ -27,27 +25,27 @@ type Status struct {
 func main() {
 	PORT := os.Getenv("PORT")
 
-	adapters, _ := connect.Connect()
-	defer func() {
-		log.Println("closing connection with database ⌛")
-		_ = adapters.DB.GetDatabase().Close()
-	}()
-
 	e := echo.New()
-	services := service.New(adapters)
-	handlers.StudentRoutes(e, services.Student())
 
 	//e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	e.GET("/ping", func(c echo.Context) error {
-		dbStatus := adapters.DB.Ping()
+		dbStatus := postgres.
+			NewPostgresAdapter().
+			Ping()
 		res := Status{
 			System:   true,
 			Database: dbStatus,
 		}
 		return c.JSON(http.StatusOK, res)
 	})
+
+	{
+		//Student Routes
+		handler := &handlers.StudentHandler{}
+		handler.Routes(e)
+	}
 
 	data, err := json.MarshalIndent(e.Routes(), "", "  ")
 	if err != nil {
