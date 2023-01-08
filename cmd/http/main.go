@@ -42,9 +42,9 @@ func main() {
 	})
 
 	{
-		//Student Routes
-		handler := &handlers.StudentHandler{}
-		handler.Routes(e)
+		//connect handlers and register routes
+		hand := handlers.NewHandlerAdapter()
+		hand.Connect(e)
 	}
 
 	data, err := json.MarshalIndent(e.Routes(), "", "  ")
