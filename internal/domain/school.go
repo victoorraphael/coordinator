@@ -1,11 +1,8 @@
 package domain
 
-import (
-	"github.com/google/uuid"
-)
-
 type School struct {
-	ID      uuid.UUID
+	ID      int64
+	Name    string
 	Address Address
 	Classes []Classroom
 }

@@ -2,11 +2,17 @@ package handlers
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/victoorraphael/coordinator/internal/adapters/repository"
 	"time"
 )
 
 const (
 	DefaultTimeHandler = 5 * time.Second
+)
+
+var (
+	studentRepository = repository.Person{}
+	addressRepository = repository.Address{}
 )
 
 type Handlers interface {
@@ -21,6 +27,7 @@ func NewHandlerAdapter() *HandlerAdapter {
 	return &HandlerAdapter{
 		handlers: []Handlers{
 			&StudentHandler{},
+			&AddressHandler{},
 		},
 	}
 }

@@ -3,15 +3,10 @@ package handlers
 import (
 	"context"
 	"github.com/labstack/echo/v4"
-	"github.com/victoorraphael/coordinator/internal/adapters/repository"
 	"github.com/victoorraphael/coordinator/internal/application/services"
 	"github.com/victoorraphael/coordinator/internal/domain"
 	"log"
 	"net/http"
-)
-
-var (
-	studentRepository = repository.Person{}
 )
 
 type StudentHandler struct{}
