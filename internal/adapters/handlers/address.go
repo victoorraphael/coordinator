@@ -19,7 +19,7 @@ func (a *AddressHandler) Routes(e *echo.Echo, services *services.Services) {
 
 func (a *AddressHandler) Find(srv *services.Services) func(c echo.Context) error {
 	return func(c echo.Context) error {
-		list, err := srv.Address.List()
+		list, err := srv.Address.FetchAll()
 		if err != nil {
 			log.Println("falha ao buscar endereços: err:", err)
 			return c.String(http.StatusInternalServerError, "não foi possível buscar endereços")

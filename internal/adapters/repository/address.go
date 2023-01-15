@@ -3,13 +3,18 @@ package repository
 import (
 	"github.com/victoorraphael/coordinator/internal/adapters"
 	"github.com/victoorraphael/coordinator/internal/domain"
+	"github.com/victoorraphael/coordinator/internal/domain/contracts"
 )
 
-type Address struct {
+type address struct {
 	pool adapters.DBPool
 }
 
-func (a *Address) List() ([]domain.Address, error) {
+func NewAddressRepo(pool adapters.DBPool) contracts.AddressRepo {
+	return &address{pool}
+}
+
+func (a *address) List() ([]domain.Address, error) {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return nil, err
@@ -24,7 +29,7 @@ func (a *Address) List() ([]domain.Address, error) {
 	return resp, errSelect
 }
 
-func (a Address) Find(id int64) (domain.Address, error) {
+func (a address) Find(id int64) (domain.Address, error) {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return domain.Address{}, err
@@ -40,7 +45,7 @@ func (a Address) Find(id int64) (domain.Address, error) {
 	return resp, err
 }
 
-func (a Address) Add(addr *domain.Address) error {
+func (a address) Add(addr *domain.Address) error {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return err
