@@ -1,9 +1,11 @@
 package repository
 
 import (
+	"context"
 	"github.com/victoorraphael/coordinator/internal/adapters"
 	"github.com/victoorraphael/coordinator/internal/domain"
 	"github.com/victoorraphael/coordinator/internal/domain/contracts"
+	"log"
 )
 
 type address struct {
@@ -52,10 +54,18 @@ func (a address) Add(addr *domain.Address) error {
 	}
 	defer a.pool.Release(conn)
 
-	_, errInsert := conn.InsertInto("address").
-		Columns("street", "city", "zip", "number").
-		Record(addr).
-		Exec()
+	errInsert := conn.
+		InsertInto("address").
+		Pair("street", addr.Street).
+		Pair("city", addr.City).
+		Pair("zip", addr.Zip).
+		Pair("number", addr.Number).
+		Returning("id").
+		LoadContext(context.Background(), &addr.ID)
+
+	if errInsert != nil {
+		log.Println(errInsert)
+	}
 
 	return errInsert
 }

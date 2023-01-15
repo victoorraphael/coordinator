@@ -56,7 +56,7 @@ func (p *Adapter) Release(resource *dbr.Session) {
 	}
 	select {
 	case p.resources <- resource:
-		log.Println("resource in queue")
+		log.Println("releasing db resource in queue")
 	default:
 		_ = resource.Close()
 	}

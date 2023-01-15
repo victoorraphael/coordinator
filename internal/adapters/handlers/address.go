@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/victoorraphael/coordinator/internal/domain"
 	"github.com/victoorraphael/coordinator/internal/services"
 	"log"
 	"net/http"
@@ -30,6 +31,16 @@ func (a *AddressHandler) Find(srv *services.Services) func(c echo.Context) error
 
 func (a *AddressHandler) Create(srv *services.Services) func(ctx echo.Context) error {
 	return func(c echo.Context) error {
-		return c.String(http.StatusNotImplemented, "not implemented")
+		var addr domain.Address
+		if err := c.Bind(&addr); err != nil {
+			return c.String(http.StatusBadRequest, "campos inválidos")
+		}
+
+		err := srv.Address.Create(&addr)
+		if err != nil {
+			return c.String(http.StatusInternalServerError, "não foi possível criar o endereço")
+		}
+
+		return c.JSON(http.StatusOK, addr)
 	}
 }
