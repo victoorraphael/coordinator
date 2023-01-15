@@ -5,7 +5,6 @@ import (
 	"github.com/victoorraphael/coordinator/internal/adapters"
 	"github.com/victoorraphael/coordinator/internal/domain"
 	"github.com/victoorraphael/coordinator/internal/domain/contracts"
-	"log"
 )
 
 type address struct {
@@ -54,7 +53,7 @@ func (a address) Add(addr *domain.Address) error {
 	}
 	defer a.pool.Release(conn)
 
-	errInsert := conn.
+	return conn.
 		InsertInto("address").
 		Pair("street", addr.Street).
 		Pair("city", addr.City).
@@ -62,10 +61,4 @@ func (a address) Add(addr *domain.Address) error {
 		Pair("number", addr.Number).
 		Returning("id").
 		LoadContext(context.Background(), &addr.ID)
-
-	if errInsert != nil {
-		log.Println(errInsert)
-	}
-
-	return errInsert
 }
