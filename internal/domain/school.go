@@ -1,8 +1,8 @@
 package domain
 
 type School struct {
-	ID      int64
-	Name    string
-	Address Address
-	Classes []Classroom
+	ID      int64       `json:"id,omitempty"`
+	Name    string      `json:"name,omitempty"`
+	Address Address     `json:"address"`
+	Classes []Classroom `json:"classes,omitempty"`
 }

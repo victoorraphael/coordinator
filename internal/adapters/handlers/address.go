@@ -1,37 +1,35 @@
 package handlers
 
 import (
-	"context"
 	"github.com/labstack/echo/v4"
-	"github.com/victoorraphael/coordinator/internal/application/services"
-	"github.com/victoorraphael/coordinator/internal/domain"
+	"github.com/victoorraphael/coordinator/internal/services"
+	"log"
 	"net/http"
 )
 
 type AddressHandler struct{}
 
-func (a *AddressHandler) Routes(e *echo.Echo) {
+func (a *AddressHandler) Routes(e *echo.Echo, services *services.Services) {
 	addr := e.Group("/address")
 
-	addr.GET("/:id", a.Find)
-	addr.POST("/", a.Create)
+	addr.GET("/", a.Find(services))
+	//addr.GET("/:id", a.Find(services))
+	addr.POST("/", a.Create(services))
 }
 
-func (a *AddressHandler) Find(c echo.Context) error {
-	return c.String(http.StatusNotImplemented, "not implemented")
+func (a *AddressHandler) Find(srv *services.Services) func(c echo.Context) error {
+	return func(c echo.Context) error {
+		list, err := srv.Address.List()
+		if err != nil {
+			log.Println("falha ao buscar endereços: err:", err)
+			return c.String(http.StatusInternalServerError, "não foi possível buscar endereços")
+		}
+		return c.JSON(http.StatusOK, list)
+	}
 }
 
-func (a *AddressHandler) Create(c echo.Context) error {
-	var addr domain.Address
-	if err := c.Bind(&addr); err != nil {
-		return c.String(http.StatusBadRequest, "invalid payload")
+func (a *AddressHandler) Create(srv *services.Services) func(ctx echo.Context) error {
+	return func(c echo.Context) error {
+		return c.String(http.StatusNotImplemented, "not implemented")
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), DefaultTimeHandler)
-	defer cancel()
-	err := services.CreateAddress(ctx, addressRepository, &addr)
-	if err != nil {
-		return c.String(http.StatusInternalServerError, "internal error")
-	}
-
-	return c.JSON(http.StatusCreated, addr)
 }

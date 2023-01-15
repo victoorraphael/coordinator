@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"github.com/victoorraphael/coordinator/internal/adapters/handlers"
 	"github.com/victoorraphael/coordinator/internal/adapters/postgres"
+	"github.com/victoorraphael/coordinator/internal/adapters/repository"
+	"github.com/victoorraphael/coordinator/internal/services"
 	"log"
 	"net/http"
 	"os"
@@ -23,35 +25,38 @@ type Status struct {
 }
 
 func main() {
-	PORT := os.Getenv("PORT")
+	dbPool, err := postgres.NewAdapter(5)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	e := echo.New()
 
-	//e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-
-	e.GET("/ping", func(c echo.Context) error {
-		dbStatus := postgres.
-			NewPostgresAdapter().
-			Ping()
-		res := Status{
-			System:   true,
-			Database: dbStatus,
-		}
-		return c.JSON(http.StatusOK, res)
-	})
+	repo := repository.New(dbPool)
+	s := services.New(repo)
 
 	{
 		//connect handlers and register routes
 		hand := handlers.NewHandlerAdapter()
-		hand.Connect(e)
+		hand.Connect(e, s)
 	}
 
-	data, err := json.MarshalIndent(e.Routes(), "", "  ")
-	if err != nil {
-		panic(err)
-	}
+	PORT := os.Getenv("PORT")
 
+	//e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.GET("/ping", func(c echo.Context) error {
+		conn, _ := dbPool.Acquire()
+		defer dbPool.Release(conn)
+
+		res := Status{
+			System:   true,
+			Database: conn.Ping() == nil,
+		}
+		return c.JSON(http.StatusOK, res)
+	})
+
+	// start server
 	srv := e.Server
 	srv.Addr = fmt.Sprintf(":%v", PORT)
 	srv.WriteTimeout = time.Second * 15
@@ -65,8 +70,15 @@ func main() {
 		}
 	}()
 
-	fmt.Println("routes registered...")
-	fmt.Printf("%s\n", data)
+	{
+		//print all registered routes
+		data, err := json.MarshalIndent(e.Routes(), "", "  ")
+		if err != nil {
+			panic(err)
+		}
+		fmt.Println("routes registered...")
+		fmt.Printf("%s\n", data)
+	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)

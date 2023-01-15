@@ -1,26 +1,56 @@
 package repository
 
 import (
-	"context"
-	"fmt"
-	"github.com/victoorraphael/coordinator/internal/adapters/postgres"
+	"github.com/victoorraphael/coordinator/internal/adapters"
 	"github.com/victoorraphael/coordinator/internal/domain"
 )
 
-type Address struct{}
+type Address struct {
+	pool adapters.DBPool
+}
 
-func (a Address) Find(ctx context.Context, id int64) (domain.Address, error) {
-	db := postgres.NewPostgresAdapter().GetDatabase()
-	query := fmt.Sprintf("SELECT street, city, zip, number FROM address WHERE id = $1")
+func (a *Address) List() ([]domain.Address, error) {
+	conn, err := a.pool.Acquire()
+	if err != nil {
+		return nil, err
+	}
+	defer a.pool.Release(conn)
+
+	var resp []domain.Address
+	_, errSelect := conn.Select("*").
+		From("address").
+		Load(&resp)
+
+	return resp, errSelect
+}
+
+func (a Address) Find(id int64) (domain.Address, error) {
+	conn, err := a.pool.Acquire()
+	if err != nil {
+		return domain.Address{}, err
+	}
+	defer a.pool.Release(conn)
+
 	resp := domain.Address{}
-	err := db.QueryRowContext(ctx, query, id).
-		Scan(&resp.Street, &resp.City, &resp.Zip, &resp.Number)
+	_, err = conn.Select("street, city, zip, number").
+		From("address").
+		Where("id = $1", id).
+		Load(&resp)
 
 	return resp, err
 }
 
-func (a Address) Add(ctx context.Context, addr *domain.Address) error {
-	db := postgres.NewPostgresAdapter().GetDatabase()
-	query := "INSERT INTO address (street, city, zip, number) VALUES ($1, $2, $3, $4) RETURNING id"
-	return db.QueryRowContext(ctx, query, addr.Street, addr.City, addr.Zip, addr.Number).Scan(&addr.ID)
+func (a Address) Add(addr *domain.Address) error {
+	conn, err := a.pool.Acquire()
+	if err != nil {
+		return err
+	}
+	defer a.pool.Release(conn)
+
+	_, errInsert := conn.InsertInto("address").
+		Columns("street", "city", "zip", "number").
+		Record(addr).
+		Exec()
+
+	return errInsert
 }

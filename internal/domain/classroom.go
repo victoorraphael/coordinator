@@ -5,8 +5,8 @@ import (
 )
 
 type Classroom struct {
-	ID   uuid.UUID
-	Name string
-	//Subjects []subject.Subject `json:"subjects"`
-	Students []Student
+	ID       uuid.UUID `json:"id"`
+	Name     string    `json:"name"`
+	Subjects []Subject `json:"subjects"`
+	Students []Student `json:"students"`
 }

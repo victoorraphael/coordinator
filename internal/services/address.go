@@ -1,14 +1,21 @@
 package services
 
 import (
-	"context"
 	"github.com/victoorraphael/coordinator/internal/adapters/repository"
 	"github.com/victoorraphael/coordinator/internal/domain"
 	"log"
 )
 
-func CreateAddress(ctx context.Context, repo repository.Address, addr *domain.Address) error {
-	err := repo.Add(ctx, addr)
+type Address struct {
+	repo *repository.Repo
+}
+
+func (a *Address) List() ([]domain.Address, error) {
+	return a.repo.Address.List()
+}
+
+func (a *Address) CreateAddress(addr *domain.Address) error {
+	err := a.repo.Address.Add(addr)
 	if err != nil {
 		log.Println("error:", err.Error())
 	}

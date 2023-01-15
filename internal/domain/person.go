@@ -7,13 +7,13 @@ import (
 )
 
 type Person struct {
-	ID        int64      `json:"id,omitempty"`
-	UUID      uuid.UUID  `json:"uuid,omitempty"`
-	Name      string     `json:"name,omitempty"`
-	Email     string     `json:"email,omitempty"`
-	Phone     string     `json:"phone,omitempty"`
+	ID        int64      `json:"id"`
+	UUID      uuid.UUID  `json:"uuid"`
+	Name      string     `json:"name"`
+	Email     string     `json:"email"`
+	Phone     string     `json:"phone"`
 	Birthdate time.Time  `json:"birthdate"`
-	Type      PersonType `json:"type,omitempty"`
+	Type      PersonType `json:"type"`
 	Address   Address    `json:"address"`
 	School    School     `json:"school"`
 }

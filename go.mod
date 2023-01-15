@@ -9,6 +9,7 @@ require (
 )
 
 require (
+	github.com/gocraft/dbr/v2 v2.7.3 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
 	github.com/labstack/gommon v0.3.1 // indirect
 	github.com/mattn/go-colorable v0.1.11 // indirect

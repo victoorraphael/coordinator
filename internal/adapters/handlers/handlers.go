@@ -2,21 +2,11 @@ package handlers
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/victoorraphael/coordinator/internal/adapters/repository"
-	"time"
-)
-
-const (
-	DefaultTimeHandler = 5 * time.Second
-)
-
-var (
-	studentRepository = repository.Person{}
-	addressRepository = repository.Address{}
+	"github.com/victoorraphael/coordinator/internal/services"
 )
 
 type Handlers interface {
-	Routes(*echo.Echo)
+	Routes(*echo.Echo, *services.Services)
 }
 
 type HandlerAdapter struct {
@@ -26,7 +16,7 @@ type HandlerAdapter struct {
 func NewHandlerAdapter() *HandlerAdapter {
 	return &HandlerAdapter{
 		handlers: []Handlers{
-			&StudentHandler{},
+			//&StudentHandler{},
 			&AddressHandler{},
 		},
 	}
@@ -37,8 +27,8 @@ func (h *HandlerAdapter) AddHandler(handler Handlers) *HandlerAdapter {
 	return h
 }
 
-func (h *HandlerAdapter) Connect(e *echo.Echo) {
+func (h *HandlerAdapter) Connect(e *echo.Echo, services *services.Services) {
 	for _, handler := range h.handlers {
-		handler.Routes(e)
+		handler.Routes(e, services)
 	}
 }
