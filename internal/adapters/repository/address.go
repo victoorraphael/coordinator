@@ -11,6 +11,7 @@ type address struct {
 	pool adapters.DBPool
 }
 
+// NewAddressRepo returns a new AddressRepo
 func NewAddressRepo(pool adapters.DBPool) contracts.AddressRepo {
 	return &address{pool}
 }

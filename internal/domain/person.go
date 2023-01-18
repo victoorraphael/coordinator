@@ -7,7 +7,7 @@ import (
 )
 
 type Person struct {
-	ID        int64      `json:"id"`
+	ID        int64      `json:"-"`
 	UUID      uuid.UUID  `json:"uuid"`
 	Name      string     `json:"name"`
 	Email     string     `json:"email"`
