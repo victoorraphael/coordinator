@@ -1,38 +1,37 @@
-package postgres
+package database
 
 import (
 	"errors"
 	"github.com/gocraft/dbr/v2"
 	_ "github.com/lib/pq"
-	"github.com/victoorraphael/coordinator/internal/adapters"
 	"log"
 	"os"
 	"sync"
 )
 
-type Adapter struct {
+type Postgres struct {
 	mu        sync.Mutex
 	closed    bool
 	resources chan *dbr.Session
 	db        *dbr.Connection
 }
 
-// NewAdapter returns a new instance of DBPool
-func NewAdapter(size uint) (adapters.DBPool, error) {
+// NewPostgres returns a new instance of DBPool
+func NewPostgres(size uint) (DBPool, error) {
 	if size <= 0 {
 		return nil, errors.New("size too small")
 	}
 
-	return &Adapter{
+	return &Postgres{
 		mu:        sync.Mutex{},
 		closed:    false,
 		resources: make(chan *dbr.Session, size),
-		db:        connect(size),
+		db:        connectPostgres(size),
 	}, nil
 }
 
 // Acquire returns a new DB session to process queries
-func (p *Adapter) Acquire() (*dbr.Session, error) {
+func (p *Postgres) Acquire() (*dbr.Session, error) {
 	select {
 	case r, ok := <-p.resources:
 		if !ok {
@@ -46,7 +45,7 @@ func (p *Adapter) Acquire() (*dbr.Session, error) {
 
 // Release try to put connection back to the pool
 // if not able to put back, connection is closed
-func (p *Adapter) Release(resource *dbr.Session) {
+func (p *Postgres) Release(resource *dbr.Session) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -63,7 +62,7 @@ func (p *Adapter) Release(resource *dbr.Session) {
 }
 
 // Close finish the resources pool
-func (p *Adapter) Close() {
+func (p *Postgres) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
@@ -81,12 +80,12 @@ func (p *Adapter) Close() {
 }
 
 // factorySession produces new sessions to be used into pool
-func (p *Adapter) factorySession() *dbr.Session {
+func (p *Postgres) factorySession() *dbr.Session {
 	return p.db.NewSession(nil)
 }
 
 // Ping try to ping database
-func (p *Adapter) Ping() bool {
+func (p *Postgres) Ping() bool {
 	log.Println("trying to ping database...")
 	err := p.db.Ping()
 	if err != nil {
@@ -97,8 +96,8 @@ func (p *Adapter) Ping() bool {
 	return true
 }
 
-// connect try to connect DB with environment variable
-func connect(size uint) *dbr.Connection {
+// connectPostgres try to connectPostgres DB with environment variable
+func connectPostgres(size uint) *dbr.Connection {
 	connStr := os.Getenv("DB_URI")
 
 	if connStr == "" {

@@ -2,28 +2,33 @@ package repository
 
 import (
 	"context"
-	"github.com/victoorraphael/coordinator/internal/adapters"
-	"github.com/victoorraphael/coordinator/internal/domain"
-	"github.com/victoorraphael/coordinator/internal/domain/contracts"
+	"github.com/victoorraphael/coordinator/internal/domain/entities"
+	"github.com/victoorraphael/coordinator/pkg/database"
 )
 
-type address struct {
-	pool adapters.DBPool
+type IAddressRepository interface {
+	List() ([]entities.Address, error)
+	Find(id int64) (entities.Address, error)
+	Add(addr *entities.Address) error
 }
 
-// NewAddressRepo returns a new AddressRepo
-func NewAddressRepo(pool adapters.DBPool) contracts.AddressRepo {
+type address struct {
+	pool database.DBPool
+}
+
+// NewAddressRepo returns a new IAddressRepository
+func NewAddressRepo(pool database.DBPool) IAddressRepository {
 	return &address{pool}
 }
 
-func (a *address) List() ([]domain.Address, error) {
+func (a *address) List() ([]entities.Address, error) {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return nil, err
 	}
 	defer a.pool.Release(conn)
 
-	var resp []domain.Address
+	var resp []entities.Address
 	_, errSelect := conn.Select("*").
 		From("address").
 		Load(&resp)
@@ -31,14 +36,14 @@ func (a *address) List() ([]domain.Address, error) {
 	return resp, errSelect
 }
 
-func (a address) Find(id int64) (domain.Address, error) {
+func (a address) Find(id int64) (entities.Address, error) {
 	conn, err := a.pool.Acquire()
 	if err != nil {
-		return domain.Address{}, err
+		return entities.Address{}, err
 	}
 	defer a.pool.Release(conn)
 
-	resp := domain.Address{}
+	resp := entities.Address{}
 	_, err = conn.Select("street, city, zip, number").
 		From("address").
 		Where("id = $1", id).
@@ -47,7 +52,7 @@ func (a address) Find(id int64) (domain.Address, error) {
 	return resp, err
 }
 
-func (a address) Add(addr *domain.Address) error {
+func (a address) Add(addr *entities.Address) error {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return err

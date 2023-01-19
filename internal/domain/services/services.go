@@ -1,12 +1,11 @@
 package services
 
 import (
-	"github.com/victoorraphael/coordinator/internal/adapters/repository"
-	"github.com/victoorraphael/coordinator/internal/domain/contracts"
+	"github.com/victoorraphael/coordinator/internal/domain/repository"
 )
 
 type Services struct {
-	Address contracts.AddressService
+	Address IAddressService
 }
 
 // New returns instances of all services

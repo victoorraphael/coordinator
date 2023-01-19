@@ -1,4 +1,4 @@
-package adapters
+package database
 
 import (
 	"github.com/gocraft/dbr/v2"

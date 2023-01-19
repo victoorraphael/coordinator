@@ -2,21 +2,16 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
-	"github.com/victoorraphael/coordinator/internal/adapters/handlers"
-	"github.com/victoorraphael/coordinator/internal/adapters/postgres"
-	"github.com/victoorraphael/coordinator/internal/adapters/repository"
-	"github.com/victoorraphael/coordinator/internal/services"
+	"github.com/victoorraphael/coordinator/internal/domain/repository"
+	"github.com/victoorraphael/coordinator/internal/domain/services"
+	"github.com/victoorraphael/coordinator/pkg/database"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
-
-	"github.com/labstack/echo/v4"
-	"github.com/labstack/echo/v4/middleware"
 )
 
 type Status struct {
@@ -25,60 +20,29 @@ type Status struct {
 }
 
 func main() {
-	dbPool, err := postgres.NewAdapter(5)
+	dbPool, err := database.NewPostgres(5)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	e := echo.New()
-
 	repo := repository.New(dbPool)
 	s := services.New(repo)
 
-	{
-		//connect handlers and register routes
-		hand := handlers.NewHandlerAdapter()
-		hand.Connect(e, s)
-	}
-
-	PORT := os.Getenv("PORT")
-
-	//e.Use(middleware.Logger())
-	e.Use(middleware.Recover())
-	e.GET("/ping", func(c echo.Context) error {
-		conn, _ := dbPool.Acquire()
-		defer dbPool.Release(conn)
-
-		res := Status{
-			System:   true,
-			Database: conn.Ping() == nil,
-		}
-		return c.JSON(http.StatusOK, res)
-	})
-
-	// start server
-	srv := e.Server
-	srv.Addr = fmt.Sprintf(":%v", PORT)
+	// setup server
+	srv := &http.Server{}
+	srv.Addr = fmt.Sprintf(":%v", os.Getenv("PORT"))
+	srv.Handler = routes(s)
 	srv.WriteTimeout = time.Second * 15
 	srv.ReadTimeout = time.Second * 15
 	srv.IdleTimeout = time.Second * 60
 
+	// start server and wait for os signal
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil {
 			log.Println(err)
 		}
 	}()
-
-	{
-		//print all registered routes
-		data, err := json.MarshalIndent(e.Routes(), "", "  ")
-		if err != nil {
-			panic(err)
-		}
-		fmt.Println("routes registered...")
-		fmt.Printf("%s\n", data)
-	}
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)

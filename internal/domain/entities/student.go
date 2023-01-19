@@ -1,4 +1,4 @@
-package domain
+package entities
 
 type Student struct {
 	ClassroomID int `json:"classroom_id"`

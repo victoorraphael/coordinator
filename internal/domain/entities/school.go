@@ -1,4 +1,4 @@
-package domain
+package entities
 
 type School struct {
 	ID      int64       `json:"id,omitempty"`

@@ -1,18 +1,17 @@
 package repository
 
 import (
-	"github.com/victoorraphael/coordinator/internal/adapters"
-	"github.com/victoorraphael/coordinator/internal/domain/contracts"
+	"github.com/victoorraphael/coordinator/pkg/database"
 )
 
 type Repo struct {
-	Address contracts.AddressRepo
+	Address IAddressRepository
 	//Person
 	//School
 	//Student
 }
 
-func New(pool adapters.DBPool) *Repo {
+func New(pool database.DBPool) *Repo {
 	return &Repo{
 		Address: NewAddressRepo(pool),
 		//Person:  Person{pool},
