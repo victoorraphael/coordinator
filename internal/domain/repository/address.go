@@ -46,7 +46,7 @@ func (a address) Find(id int64) (entities.Address, error) {
 	resp := entities.Address{}
 	_, err = conn.Select("street, city, zip, number").
 		From("address").
-		Where("id = $1", id).
+		Where("id = ?", id).
 		Load(&resp)
 
 	return resp, err

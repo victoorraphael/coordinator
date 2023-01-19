@@ -14,11 +14,6 @@ import (
 	"time"
 )
 
-type Status struct {
-	System   bool
-	Database bool
-}
-
 func main() {
 	dbPool, err := database.NewPostgres(5)
 	if err != nil {

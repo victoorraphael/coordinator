@@ -6,7 +6,7 @@ import (
 
 type Repo struct {
 	Address IAddressRepository
-	//Person
+	Person  IPersonRepository
 	//School
 	//Student
 }
@@ -14,7 +14,7 @@ type Repo struct {
 func New(pool database.DBPool) *Repo {
 	return &Repo{
 		Address: NewAddressRepo(pool),
-		//Person:  Person{pool},
+		Person:  NewPersonRepo(pool),
 		//School:  School{pool},
 		//Student: Student{pool},
 	}

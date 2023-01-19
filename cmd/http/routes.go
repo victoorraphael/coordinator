@@ -25,5 +25,14 @@ func routes(s *services.Services) *gin.Engine {
 			POST("", hdl.Create)
 	}
 
+	//student routes
+	{
+		studentGroup := private.Group("students")
+		hdl := handlers.NewStudentHandler(s)
+		studentGroup.
+			GET("", hdl.Find).
+			POST("", hdl.Create)
+	}
+
 	return r
 }
