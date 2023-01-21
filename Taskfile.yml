@@ -33,11 +33,11 @@ tasks:
   migrate-up:
     desc: run migrations on database
     cmds:
-      - migrate -database ${DB_URI} -path db/migrations up
+      - migrate -database ${DB_URI} -path db/migrations -verbose up
   migrate-down:
     desc: remove migrations on database
     cmds:
-      - migrate -database ${DB_URI} -path db/migrations down
+      - migrate -database ${DB_URI} -path db/migrations -verbose down
 
   create-table:
     desc: create a new table to be available on migration-up
