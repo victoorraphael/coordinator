@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS school_classroom (
 );
 
 CREATE TABLE IF NOT EXISTS persons(
-  id SERIAL,
+  id SERIAL PRIMARY KEY,
   uuid uuid DEFAULT uuid_generate_v4(),
   name varchar(255) not null,
   email varchar(255) unique not null,
@@ -58,8 +58,7 @@ CREATE TABLE IF NOT EXISTS persons(
   type smallint,
   address_id int not null,
 
-  FOREIGN KEY (address_id) REFERENCES address (id),
-  PRIMARY KEY (id)
+  CONSTRAINT addr_id FOREIGN KEY (address_id) REFERENCES address (id)
 );
 
 CREATE TABLE IF NOT EXISTS professor (

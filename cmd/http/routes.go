@@ -14,9 +14,17 @@ func routes(s *services.Services) *gin.Engine {
 		c.JSON(http.StatusOK, gin.H{"status": true})
 	})
 
-	private := r.Group("/")
+	// auth routes
+	{
+		authGroup := public.Group("/auth")
+		hdl := handlers.NewAuthHandler(s)
+		authGroup.
+			POST("/login", hdl.Login)
+	}
 
-	//address routes
+	private := r.Group("/", AuthMiddleware())
+
+	// address routes
 	{
 		addressGroup := private.Group("address")
 		hdl := handlers.NewAddressHandler(s)
@@ -25,7 +33,7 @@ func routes(s *services.Services) *gin.Engine {
 			POST("", hdl.Create)
 	}
 
-	//student routes
+	// student routes
 	{
 		studentGroup := private.Group("students")
 		hdl := handlers.NewStudentHandler(s)
