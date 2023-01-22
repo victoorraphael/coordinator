@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	httphdl "github.com/victoorraphael/coordinator/cmd/http"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
 	"github.com/victoorraphael/coordinator/pkg/database"
@@ -19,6 +20,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer dbPool.Close()
 
 	repo := repository.New(dbPool)
 	s := services.New(repo)
@@ -26,9 +28,10 @@ func main() {
 	// setup server
 	srv := &http.Server{}
 	srv.Addr = fmt.Sprintf(":%v", os.Getenv("PORT"))
-	srv.Handler = routes(s)
+	srv.Handler = httphdl.Routes(s)
 	srv.WriteTimeout = time.Second * 15
 	srv.ReadTimeout = time.Second * 15
+	srv.ReadHeaderTimeout = time.Second * 15
 	srv.IdleTimeout = time.Second * 60
 
 	// start server and wait for os signal
@@ -49,6 +52,4 @@ func main() {
 
 	_ = srv.Shutdown(ctx)
 	log.Println("shutting down! 👋")
-
-	os.Exit(0)
 }

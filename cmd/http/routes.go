@@ -1,4 +1,4 @@
-package main
+package httphdl
 
 import (
 	"github.com/gin-gonic/gin"
@@ -7,14 +7,14 @@ import (
 	"net/http"
 )
 
-func routes(s *services.Services) *gin.Engine {
+func Routes(s *services.Services, test ...bool) *gin.Engine {
 	r := gin.Default()
 	public := r.Group("")
 	public.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": true})
 	})
 
-	// auth routes
+	// auth Routes
 	{
 		authGroup := public.Group("/auth")
 		hdl := handlers.NewAuthHandler(s)
@@ -22,9 +22,14 @@ func routes(s *services.Services) *gin.Engine {
 			POST("/login", hdl.Login)
 	}
 
-	private := r.Group("/", AuthMiddleware())
+	var private *gin.RouterGroup
+	if len(test) > 0 {
+		private = r.Group("/")
+	} else {
+		private = r.Group("/", AuthMiddleware())
+	}
 
-	// address routes
+	// address Routes
 	{
 		addressGroup := private.Group("address")
 		hdl := handlers.NewAddressHandler(s)
@@ -33,7 +38,7 @@ func routes(s *services.Services) *gin.Engine {
 			POST("", hdl.Create)
 	}
 
-	// student routes
+	// student Routes
 	{
 		studentGroup := private.Group("students")
 		hdl := handlers.NewStudentHandler(s)

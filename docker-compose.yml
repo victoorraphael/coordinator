@@ -14,19 +14,31 @@ services:
       - '5454:5432'
     networks:
       - app
-  web:
+
+  backend:
     build: .
-    ports:
-      - "8080:8080"
     depends_on:
       - database
     links:
       - database
     networks:
       - app
+
+  proxy:
+    image: nginx:stable-alpine
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./config/nginx:/etc/nginx
+    networks:
+      - app
+
 volumes:
   db-data:
     driver: local
+
 networks:
   app:
     driver: bridge
