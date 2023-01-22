@@ -27,7 +27,7 @@ type UserLoginResponse struct {
 
 func (u *User) EncryptPassword(password string) (string, error) {
 	hash, err := security.HashPassword(password)
-	return string(hash), err
+	return hash, err
 }
 
 func (u *User) Validate(password string) error {
@@ -40,7 +40,7 @@ func (u *User) Validate(password string) error {
 		return errors.New("credenciais inválidas")
 	}
 
-	ok := security.PasswordValid([]byte(u.PasswordHash), password)
+	ok := security.PasswordValid(u.PasswordHash, password)
 	if !ok {
 		log.Println("[user:Validate]: password inválido")
 		return errors.New("credenciais inválidas")

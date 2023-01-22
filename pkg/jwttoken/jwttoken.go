@@ -22,7 +22,15 @@ type Claims struct {
 	Authorized bool
 }
 
+var (
+	ErrInvalidUserData = errors.New("invalid user data")
+)
+
 func CreateToken(userID int64, userUUID string) (*Details, error) {
+	if userID == 0 || userUUID == "" {
+		return nil, ErrInvalidUserData
+	}
+
 	td := &Details{}
 	td.ExpiredToken = time.Now().Add(time.Minute * 30).Unix()
 	var err error
@@ -69,7 +77,7 @@ func TokenValid(r *http.Request) error {
 		return err
 	}
 
-	if _, ok := token.Claims.(jwt.Claims); !ok && !token.Valid {
+	if !token.Valid {
 		return errors.New("invalid token")
 	}
 
