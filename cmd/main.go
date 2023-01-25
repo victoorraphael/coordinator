@@ -26,15 +26,16 @@ func main() {
 	s := services.New(repo)
 
 	// setup server
-	srv := &http.Server{}
-	srv.Addr = fmt.Sprintf(":%v", os.Getenv("PORT"))
-	srv.Handler = httphdl.Routes(s)
-	srv.WriteTimeout = time.Second * 15
-	srv.ReadTimeout = time.Second * 15
-	srv.ReadHeaderTimeout = time.Second * 15
-	srv.IdleTimeout = time.Second * 60
+	srv := &http.Server{
+		Addr:              fmt.Sprintf(":%v", os.Getenv("PORT")),
+		Handler:           httphdl.Routes(s),
+		WriteTimeout:      time.Second * 15,
+		ReadTimeout:       time.Second * 15,
+		ReadHeaderTimeout: time.Second * 15,
+		IdleTimeout:       time.Second * 60,
+	}
 
-	// start server and wait for os signal
+	// start server and wait for OS signal
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil {
