@@ -1,4 +1,4 @@
-FROM golang:alpine
+FROM golang:1.18-alpine
 
 # Set necessary environmet variables needed for our image
 ENV GO111MODULE=on \
@@ -9,28 +9,12 @@ ENV GO111MODULE=on \
 #    DB_URI="postgres://jlsfrbek:41YTk-sbD-OIQyz7Odh9E7BIksrvHhu0@babar.db.elephantsql.com/jlsfrbek"
      DB_URI="postgres://root:secret@localhost:5454/schoolplus?sslmode=disable"
 
-# Move to working directory /build
-WORKDIR /build
+WORKDIR /app
 
-# Copy and download dependency using go mod
-COPY go.mod .
-COPY go.sum .
+COPY ./ /app
+
 RUN go mod download
 
-# Copy the code into the container
-COPY . .
+RUN go install github.com/githubnemo/CompileDaemon@latest
 
-# Build the application
-RUN go build -o main ./cmd/main.go
-
-# Move to /dist directory as the place for resulting binary folder
-WORKDIR /dist
-
-# Copy binary from build to main folder
-RUN cp /build/main .
-
-# Export necessary port
-EXPOSE 8080
-
-# Command to run when starting the container
-CMD ["/dist/main"]
+ENTRYPOINT CompileDaemon --build="go build -o /app/main /app/cmd/main.go" --command="/app/main"

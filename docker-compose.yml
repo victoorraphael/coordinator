@@ -16,13 +16,20 @@ services:
       - app
 
   backend:
-    build: .
+    container_name: backend
+    image: cosmtrek/air
+    working_dir: /app
     depends_on:
       - database
     links:
       - database
+    volumes:
+      - ./:/app
     networks:
       - app
+    environment:
+      - DB_URI="postgres://root:secret@localhost:5454/schoolplus?sslmode=disable"
+      - PORT=8080
 
   proxy:
     image: nginx:stable-alpine

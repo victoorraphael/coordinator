@@ -7,11 +7,14 @@ env:
 
 tasks:
   run:
-    desc: run project locally and db on docker
+    desc: run project
     cmds:
-      - task: db
-      - go run cmd/http/main.go
+      - docker-compose up -d
 
+  build-and-run:
+    desc: build and run the project
+    cmds:
+      - docker-compose up --build -d
   db:
     desc: run db on docker
     cmds:
