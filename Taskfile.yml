@@ -2,14 +2,16 @@ version: '3'
 
 env:
   PORT: 8080
-  #DB_URI: postgres://jlsfrbek:41YTk-sbD-OIQyz7Odh9E7BIksrvHhu0@babar.db.elephantsql.com:5432/jlsfrbek
-  DB_URI: postgres://root:secret@localhost:5454/schoolplus?sslmode=disable
 
 tasks:
   run:
     desc: run project
     cmds:
       - docker-compose up -d
+  local:
+    desc: run database
+    cmds:
+      - docker-compose up -d database
 
   build-and-run:
     desc: build and run the project
