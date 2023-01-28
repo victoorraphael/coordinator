@@ -30,3 +30,18 @@ func (a *AuthHandler) Login(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+func (a *AuthHandler) SignIn(c *gin.Context) {
+	var req entities.UserLoginView
+	if err := c.ShouldBind(&req); err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	err := a.auth.SignIn(req)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+}
