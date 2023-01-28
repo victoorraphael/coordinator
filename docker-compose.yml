@@ -2,7 +2,7 @@ version: '3.8'
 services:
   database:
     image: 'postgres:14.2'
-    container_name: 'postgres'
+    container_name: database
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=secret
@@ -11,17 +11,16 @@ services:
       - db-data:/var/lib/postgresql/data
       - ./db/extensions/:/docker-entrypoint-initdb.d/
     ports:
-      - '5454:5432'
+      - "5432:5432"
     networks:
       - app
 
   backend:
     container_name: backend
-    image: cosmtrek/air
-    working_dir: /app
+    build:
+      context: .
+      dockerfile: Dockerfile
     depends_on:
-      - database
-    links:
       - database
     volumes:
       - ./:/app
