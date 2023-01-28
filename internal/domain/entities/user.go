@@ -2,10 +2,11 @@ package entities
 
 import (
 	"errors"
+	"log"
+
 	"github.com/badoux/checkmail"
 	"github.com/google/uuid"
 	"github.com/victoorraphael/coordinator/pkg/security"
-	"log"
 )
 
 type User struct {

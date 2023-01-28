@@ -1,4 +1,4 @@
-package handlers_test
+package fixtures
 
 import (
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
@@ -6,15 +6,15 @@ import (
 	"github.com/victoorraphael/coordinator/pkg/database"
 	"log"
 	"os"
-	"testing"
 )
 
-var (
-	dbPool database.DBPool
-	srvs   *services.Services
-)
+type Adapters struct {
+	pool database.DBPool
+	repo *repository.Repo
+	srv  *services.Services
+}
 
-func TestMain(m *testing.M) {
+func Connect() *Adapters {
 	err := os.Setenv("DB_URI", "postgres://root:secret@localhost:5432/schoolplus?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
@@ -32,13 +32,13 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 	pool.Release(conn)
-	dbPool = pool
 
-	repo := repository.New(dbPool)
-	srvs = services.New(repo)
+	repo := repository.New(pool)
+	srv := services.New(repo)
 
-	code := m.Run()
-
-	dbPool.Close()
-	os.Exit(code)
+	return &Adapters{
+		pool: pool,
+		repo: repo,
+		srv:  srv,
+	}
 }

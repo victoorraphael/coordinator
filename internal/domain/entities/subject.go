@@ -5,7 +5,6 @@ import (
 )
 
 type Subject struct {
-	ID        uuid.UUID `json:"id"`
-	Name      string    `json:"name"`
-	Professor Professor `json:"professor"`
+	ID   uuid.UUID `json:"id"`
+	Name string    `json:"name"`
 }
