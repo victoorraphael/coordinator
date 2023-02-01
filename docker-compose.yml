@@ -9,9 +9,8 @@ services:
       - POSTGRES_DB=schoolplus
     volumes:
       - db-data:/var/lib/postgresql/data
-      - ./db/extensions/:/docker-entrypoint-initdb.d/
     ports:
-      - "5432:5432"
+      - "0.0.0.0:5432:5432"
     networks:
       - app
 
@@ -24,10 +23,12 @@ services:
       - database
     volumes:
       - ./:/app
+    links:
+      - database
     networks:
       - app
     environment:
-      - DB_URI="postgres://root:secret@localhost:5454/schoolplus?sslmode=disable"
+      - DB_URI="postgres://root:secret@database:5432/schoolplus?sslmode=disable"
       - PORT=8080
 
   proxy:
