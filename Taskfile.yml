@@ -29,6 +29,13 @@ tasks:
       - docker-compose down
       - echo "Done! 👋🏼"
 
+  clear-all:
+    desc: clear everything
+    cmds:
+      - docker-compose down
+      - docker volume prune
+      - echo "Done! 👋🏼"
+
   setup:
     desc: setup environment to first run
     cmds:

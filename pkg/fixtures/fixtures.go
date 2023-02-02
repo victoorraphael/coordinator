@@ -6,7 +6,6 @@ import (
 	"github.com/victoorraphael/coordinator/internal/domain/services"
 	"github.com/victoorraphael/coordinator/pkg/database"
 	"log"
-	"os"
 )
 
 type Adapters struct {
@@ -15,18 +14,14 @@ type Adapters struct {
 	Srv  *services.Services
 }
 
-func (a *Adapters) Close() error {
-	a.Pool.Close()
-	a.Srv = nil
-	a.Repo = nil
+func (adapters *Adapters) Close() error {
+	adapters.Pool.Close()
+	adapters.Srv = nil
+	adapters.Repo = nil
 	return nil
 }
 
 func Connect() *Adapters {
-	err := os.Setenv("DB_URI", "postgres://root:secret@abobrinha:5432/schoolplus?sslmode=disable")
-	if err != nil {
-		log.Fatal(err)
-	}
 	pool, err := database.NewPostgres(1)
 	if err != nil {
 		log.Fatal(err)

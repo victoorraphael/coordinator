@@ -9,6 +9,7 @@ import (
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
 	"github.com/victoorraphael/coordinator/pkg/database"
+	"github.com/victoorraphael/coordinator/pkg/fixtures"
 	"log"
 	"net/http"
 	"os"
@@ -18,8 +19,24 @@ import (
 )
 
 func main() {
-	debugMode := flag.Bool("debug", false, "run routes without authorization")
+	var (
+		debugMode bool
+		seed      bool
+	)
+	flag.BoolVar(&debugMode, "debug", false, "run routes without authorization")
+	flag.BoolVar(&seed, "seed", false, "seed database with dumb data")
 	flag.Parse()
+
+	if seed {
+		log.Println("seeding database...")
+		err := fixtures.
+			Connect().
+			Seed().
+			Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	dbPool, err := database.NewPostgres(5)
 	if err != nil {
@@ -44,7 +61,7 @@ func main() {
 	// setup server
 	srv := &http.Server{
 		Addr:              fmt.Sprintf(":%v", os.Getenv("PORT")),
-		Handler:           httphdl.Routes(s, *debugMode),
+		Handler:           httphdl.Routes(s, debugMode),
 		WriteTimeout:      time.Second * 15,
 		ReadTimeout:       time.Second * 15,
 		ReadHeaderTimeout: time.Second * 15,

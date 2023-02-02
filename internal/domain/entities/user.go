@@ -10,7 +10,7 @@ import (
 
 type User struct {
 	ID           int64  `db:"id"`
-	UserID       int64  `db:"person_id"`
+	PersonID     int64  `db:"person_id"`
 	Email        string `db:"email"`
 	PasswordHash string `db:"password"`
 }

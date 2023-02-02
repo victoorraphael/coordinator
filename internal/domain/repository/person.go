@@ -44,14 +44,15 @@ func (p *person) Add(person *entities.Person) error {
 
 	return conn.
 		InsertInto("persons").
+		Pair("uuid", person.UUID).
 		Pair("name", person.Name).
 		Pair("email", person.Email).
 		Pair("phone", person.Phone).
 		Pair("birthdate", person.Birthdate).
 		Pair("type", person.Type).
 		Pair("address_id", person.AddressID).
-		Returning("uuid").
-		LoadContext(context.Background(), &person.UUID)
+		Returning("id").
+		LoadContext(context.Background(), &person.ID)
 }
 
 func (p *person) FindID(ctx context.Context, id int64) (entities.Person, error) {

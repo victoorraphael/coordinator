@@ -44,7 +44,7 @@ func (u *user) Add(ctx context.Context, user *entities.User) error {
 	defer u.pool.Release(conn)
 
 	_, errIns := conn.InsertInto("users").
-		Pair("user_id", user.UserID).
+		Pair("person_id", user.PersonID).
 		Pair("email", user.Email).
 		Pair("password", user.PasswordHash).
 		ExecContext(ctx)
