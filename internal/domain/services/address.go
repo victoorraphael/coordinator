@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
+	"errors"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/pkg/uid"
+	"log"
 )
 
 type IAddressService interface {
@@ -25,6 +27,20 @@ func (a *address) FetchAll(ctx context.Context) ([]entities.Address, error) {
 }
 
 func (a *address) Create(ctx context.Context, addr *entities.Address) error {
+	exist, err := a.repo.Address.Search(ctx, entities.Address{
+		Street: addr.Street,
+		City:   addr.City,
+		Zip:    addr.Zip,
+	})
+	if err != nil {
+		log.Println("info: error:", err)
+		return err
+	}
+
+	if exist.ID != 0 {
+		return errors.New("endereço já existe")
+	}
+
 	addr.UUID = uid.NewUUID().String()
 	return a.repo.Address.Add(ctx, addr)
 }

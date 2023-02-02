@@ -44,7 +44,7 @@ func (adapters *Adapters) Seed() *Adapters {
 	person.Birthdate = time.Now().AddDate(-30, 0, 0)
 	person.Type = entities.PersonStudent
 	person.AddressID = addr.ID
-	errFatal(adapters.Repo.Person.Add(&person))
+	errFatal(adapters.Repo.Person.Add(ctx, &person))
 	pass, _ := security.HashPassword("supersecret")
 	user := entities.User{
 		PersonID:     person.ID,

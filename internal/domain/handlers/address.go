@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
@@ -35,7 +36,7 @@ func (a *AddressHandler) Create(c *gin.Context) {
 
 	err := a.addr.Create(c, &addr)
 	if err != nil {
-		c.String(http.StatusInternalServerError, "não foi possível criar o endereço")
+		c.String(http.StatusInternalServerError, fmt.Errorf("não foi possível criar o endereço: %w", err).Error())
 		return
 	}
 
