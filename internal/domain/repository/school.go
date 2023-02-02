@@ -46,7 +46,7 @@ func (s *school) Add(ctx context.Context, school *entities.School) error {
 
 	err = conn.InsertInto("school").
 		Pair("name", school.Name).
-		Pair("address_id", school.Address.ID).
+		Pair("address_id", school.AddressID).
 		Returning("id").
 		LoadContext(ctx, &school.ID)
 	return err

@@ -1,8 +1,8 @@
 package entities
 
 type Student struct {
-	ClassroomID int `json:"classroom_id"`
-	SchoolID    int `json:"school_id"`
+	ClassroomID int `db:"classroom_id"`
+	SchoolID    int `db:"school_id"`
 	Person
 }
 

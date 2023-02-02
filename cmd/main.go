@@ -20,6 +20,7 @@ import (
 func main() {
 	debugMode := flag.Bool("debug", false, "run routes without authorization")
 	flag.Parse()
+
 	dbPool, err := database.NewPostgres(5)
 	if err != nil {
 		log.Fatal(err)

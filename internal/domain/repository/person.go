@@ -10,6 +10,7 @@ type IPersonRepository interface {
 	List(entities.PersonType) ([]entities.Person, error)
 	Add(*entities.Person) error
 	FindUUID(uuid string) (entities.Person, error)
+	FindID(ctx context.Context, id int64) (entities.Person, error)
 	Delete(uuid string) error
 	Update(entities.Person) error
 }
@@ -51,6 +52,21 @@ func (p *person) Add(person *entities.Person) error {
 		Pair("address_id", person.AddressID).
 		Returning("uuid").
 		LoadContext(context.Background(), &person.UUID)
+}
+
+func (p *person) FindID(ctx context.Context, id int64) (entities.Person, error) {
+	conn, err := p.pool.Acquire()
+	if err != nil {
+		return entities.Person{}, err
+	}
+	defer p.pool.Release(conn)
+
+	var res entities.Person
+	_, err = conn.Select("*").
+		From("persons").
+		Where("id = ?", id).
+		LoadContext(ctx, &res)
+	return res, err
 }
 
 func (p *person) FindUUID(uuid string) (entities.Person, error) {

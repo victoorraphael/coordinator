@@ -8,7 +8,7 @@ import (
 
 type Person struct {
 	ID        int64      `db:"id"`
-	UUID      uuid.UUID  `db:"uuid"`
+	UUID      string     `db:"uuid"`
 	Name      string     `db:"name"`
 	Email     string     `db:"email"`
 	Phone     string     `db:"phone"`
@@ -16,7 +16,6 @@ type Person struct {
 	CreatedAt time.Time  `db:"created_at"`
 	Type      PersonType `db:"type"`
 	AddressID int64      `db:"address_id"`
-	SchoolID  int64      `db:"-"` //not implemented yet
 }
 
 type PersonView struct {
@@ -28,7 +27,6 @@ type PersonView struct {
 }
 
 type PersonViewDetailed struct {
-	ID        int64      `json:"id"`
 	UUID      uuid.UUID  `json:"uuid"`
 	Name      string     `json:"name"`
 	Email     string     `json:"email"`

@@ -1,10 +1,7 @@
 package entities
 
-import (
-	"github.com/google/uuid"
-)
-
 type Subject struct {
-	ID   uuid.UUID `json:"id"`
-	Name string    `json:"name"`
+	ID   int64  `json:"-" db:"id"`
+	UUID string `json:"uuid" db:"uuid"`
+	Name string `json:"name" db:"name"`
 }

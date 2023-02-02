@@ -51,7 +51,6 @@ func (s *StudentHandler) Create(c *gin.Context) {
 		Phone:     req.Phone,
 		Birthdate: req.Birthdate,
 		AddressID: req.Address.ID,
-		SchoolID:  req.SchoolID,
 	}
 	uid, err := s.personService.Create(p)
 	if err != nil {

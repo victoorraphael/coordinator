@@ -69,7 +69,11 @@ func (a *authentication) Login(data entities.UserLoginView) (entities.UserLoginR
 		return resp, err
 	}
 
-	token, err := jwttoken.CreateToken(user.ID, user.UUID.String())
+	p, err := a.repo.Person.FindID(context.Background(), user.ID)
+	if err != nil {
+		return resp, err
+	}
+	token, err := jwttoken.CreateToken(user.ID, p.UUID)
 	if err != nil {
 		return resp, err
 	}

@@ -15,7 +15,7 @@ var (
 )
 
 func TestMain(m *testing.M) {
-	err := os.Setenv("DB_URI", "postgres://root:secret@localhost:5432/schoolplus?sslmode=disable")
+	err := os.Setenv("DB_URI", "postgres://root:secret@abobrinha:5432/schoolplus?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}

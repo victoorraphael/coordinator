@@ -5,15 +5,14 @@ import (
 	"log"
 
 	"github.com/badoux/checkmail"
-	"github.com/google/uuid"
 	"github.com/victoorraphael/coordinator/pkg/security"
 )
 
 type User struct {
-	ID           int64     `db:"id"`
-	UUID         uuid.UUID `db:"uuid"`
-	Email        string    `db:"email"`
-	PasswordHash string    `db:"password"`
+	ID           int64  `db:"id"`
+	UserID       int64  `db:"person_id"`
+	Email        string `db:"email"`
+	PasswordHash string `db:"password"`
 }
 
 type UserLoginView struct {

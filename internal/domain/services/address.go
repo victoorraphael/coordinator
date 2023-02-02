@@ -1,13 +1,15 @@
 package services
 
 import (
+	"context"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
+	"github.com/victoorraphael/coordinator/pkg/uid"
 )
 
 type IAddressService interface {
-	FetchAll() ([]entities.Address, error)
-	Create(*entities.Address) error
+	FetchAll(ctx context.Context) ([]entities.Address, error)
+	Create(ctx context.Context, addr *entities.Address) error
 }
 
 type address struct {
@@ -18,10 +20,11 @@ func NewAddressService(repo *repository.Repo) IAddressService {
 	return &address{repo}
 }
 
-func (a *address) FetchAll() ([]entities.Address, error) {
-	return a.repo.Address.List()
+func (a *address) FetchAll(ctx context.Context) ([]entities.Address, error) {
+	return a.repo.Address.List(ctx)
 }
 
-func (a *address) Create(addr *entities.Address) error {
-	return a.repo.Address.Add(addr)
+func (a *address) Create(ctx context.Context, addr *entities.Address) error {
+	addr.UUID = uid.NewUUID().String()
+	return a.repo.Address.Add(ctx, addr)
 }

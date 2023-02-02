@@ -1,6 +1,7 @@
 package fixtures
 
 import (
+	_ "github.com/lib/pq" //
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
 	"github.com/victoorraphael/coordinator/pkg/database"
@@ -9,13 +10,13 @@ import (
 )
 
 type Adapters struct {
-	pool database.DBPool
-	repo *repository.Repo
-	srv  *services.Services
+	Pool database.DBPool
+	Repo *repository.Repo
+	Srv  *services.Services
 }
 
 func Connect() *Adapters {
-	err := os.Setenv("DB_URI", "postgres://root:secret@localhost:5432/schoolplus?sslmode=disable")
+	err := os.Setenv("DB_URI", "postgres://root:secret@abobrinha:5432/schoolplus?sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -37,8 +38,8 @@ func Connect() *Adapters {
 	srv := services.New(repo)
 
 	return &Adapters{
-		pool: pool,
-		repo: repo,
-		srv:  srv,
+		Pool: pool,
+		Repo: repo,
+		Srv:  srv,
 	}
 }

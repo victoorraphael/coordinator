@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
@@ -17,7 +18,7 @@ func NewAddressHandler(s *services.Services) *AddressHandler {
 }
 
 func (a *AddressHandler) Find(c *gin.Context) {
-	list, err := a.addr.FetchAll()
+	list, err := a.addr.FetchAll(context.Background())
 	if err != nil {
 		log.Println("falha ao buscar endereços: err:", err)
 		c.String(http.StatusInternalServerError, "não foi possível buscar endereços")
@@ -33,7 +34,7 @@ func (a *AddressHandler) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.addr.Create(&addr)
+	err := a.addr.Create(context.Background(), &addr)
 	if err != nil {
 		c.String(http.StatusInternalServerError, "não foi possível criar o endereço")
 		return

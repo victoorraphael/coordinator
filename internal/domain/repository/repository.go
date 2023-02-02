@@ -5,15 +5,21 @@ import (
 )
 
 type Repo struct {
-	Address IAddressRepository
-	Person  IPersonRepository
-	User    IUserRepository
+	Address   IAddressRepository
+	Classroom IClassroomRepository
+	Person    IPersonRepository
+	School    ISchoolRepository
+	Subject   ISubjectRepository
+	User      IUserRepository
 }
 
 func New(pool database.DBPool) *Repo {
 	return &Repo{
-		Address: NewAddressRepo(pool),
-		Person:  NewPersonRepo(pool),
-		User:    NewUserRepo(pool),
+		Address:   NewAddressRepo(pool),
+		Classroom: NewClassroomRepository(pool),
+		Person:    NewPersonRepo(pool),
+		School:    NewSchoolRespository(pool),
+		Subject:   NewSubjectRepository(pool),
+		User:      NewUserRepo(pool),
 	}
 }

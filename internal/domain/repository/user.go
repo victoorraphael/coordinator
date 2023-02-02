@@ -29,7 +29,7 @@ func (u *user) FindEmail(ctx context.Context, email string) (entities.User, erro
 	var res entities.User
 	_, errSelect := conn.Select("users.id, users.email, users.password, persons.uuid").
 		From("users").
-		Join("persons", "persons.email = users.email").
+		Join("persons", "persons.id = users.person_id").
 		Where("users.email = ?", email).
 		LoadContext(ctx, &res)
 
@@ -44,6 +44,7 @@ func (u *user) Add(ctx context.Context, user *entities.User) error {
 	defer u.pool.Release(conn)
 
 	_, errIns := conn.InsertInto("users").
+		Pair("user_id", user.UserID).
 		Pair("email", user.Email).
 		Pair("password", user.PasswordHash).
 		ExecContext(ctx)

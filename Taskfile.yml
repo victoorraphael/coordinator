@@ -2,6 +2,7 @@ version: '3'
 
 env:
   PORT: 8080
+  DB_URI: postgres://root:secret@localhost:5432/schoolplus?sslmode=disable
 
 tasks:
   run:
