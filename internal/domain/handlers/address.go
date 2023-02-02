@@ -18,7 +18,7 @@ func NewAddressHandler(s *services.Services) *AddressHandler {
 }
 
 func (a *AddressHandler) Find(c *gin.Context) {
-	list, err := a.addr.FetchAll(context.Background())
+	list, err := a.addr.FetchAll(c)
 	if err != nil {
 		log.Println("falha ao buscar endereços: err:", err)
 		c.String(http.StatusInternalServerError, "não foi possível buscar endereços")

@@ -22,12 +22,7 @@ func Routes(s *services.Services, test ...bool) *gin.Engine {
 			POST("/login", hdl.Login)
 	}
 
-	var private *gin.RouterGroup
-	if len(test) > 0 {
-		private = r.Group("/")
-	} else {
-		private = r.Group("/", AuthMiddleware())
-	}
+	private := r.Group("/", AuthMiddleware(), SessionMiddleware())
 
 	// address Routes
 	{

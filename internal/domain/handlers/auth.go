@@ -22,7 +22,7 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	resp, err := a.auth.Login(req)
+	resp, err := a.auth.Login(c, req)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
@@ -38,7 +38,7 @@ func (a *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	err := a.auth.SignIn(req)
+	err := a.auth.SignIn(c, req)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return

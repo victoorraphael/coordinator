@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/google/uuid"
 	"net/http"
 	"os"
 	"strings"
@@ -18,7 +17,7 @@ type Details struct {
 
 type Claims struct {
 	UserID     int64
-	UserUUID   uuid.UUID
+	UserUUID   string
 	Authorized bool
 }
 
@@ -97,12 +96,12 @@ func ExtractTokenMetadata(r *http.Request) (*Claims, error) {
 			return nil, err
 		}
 
-		userId := claims["user_id"].(int64)
+		userID := int64(claims["user_id"].(float64))
 		userUUIDStr := claims["user_uuid"].(string)
 
 		return &Claims{
-			UserID:     userId,
-			UserUUID:   uuid.MustParse(userUUIDStr),
+			UserID:     userID,
+			UserUUID:   userUUIDStr,
 			Authorized: authorized,
 		}, nil
 	}

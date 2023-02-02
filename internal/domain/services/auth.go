@@ -10,8 +10,8 @@ import (
 )
 
 type IAuthenticationService interface {
-	SignIn(entities.UserLoginView) error
-	Login(entities.UserLoginView) (entities.UserLoginResponse, error)
+	SignIn(ctx context.Context, user entities.UserLoginView) error
+	Login(ctx context.Context, user entities.UserLoginView) (entities.UserLoginResponse, error)
 	Logout()
 }
 
@@ -23,12 +23,12 @@ func NewAuthenticationService(repo *repository.Repo) IAuthenticationService {
 	return &authentication{repo}
 }
 
-func (a *authentication) SignIn(u entities.UserLoginView) error {
+func (a *authentication) SignIn(ctx context.Context, u entities.UserLoginView) error {
 	if err := u.Validate(); err != nil {
 		return err
 	}
 
-	existentUser, err := a.repo.User.FindEmail(context.Background(), u.Email)
+	existentUser, err := a.repo.User.FindEmail(ctx, u.Email)
 	if err != nil && !errors.Is(err, dbr.ErrNotFound) {
 		return err
 	}
@@ -44,19 +44,19 @@ func (a *authentication) SignIn(u entities.UserLoginView) error {
 	}
 	user.PasswordHash = passHash
 
-	if err := a.repo.User.Add(context.Background(), &user); err != nil {
+	if err := a.repo.User.Add(ctx, &user); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (a *authentication) Login(data entities.UserLoginView) (entities.UserLoginResponse, error) {
+func (a *authentication) Login(ctx context.Context, data entities.UserLoginView) (entities.UserLoginResponse, error) {
 	var resp entities.UserLoginResponse
 	if err := data.Validate(); err != nil {
 		return resp, err
 	}
-	user, err := a.repo.User.FindEmail(context.Background(), data.Email)
+	user, err := a.repo.User.FindEmail(ctx, data.Email)
 	if err != nil {
 		return resp, err
 	}
@@ -69,7 +69,7 @@ func (a *authentication) Login(data entities.UserLoginView) (entities.UserLoginR
 		return resp, err
 	}
 
-	p, err := a.repo.Person.FindID(context.Background(), user.ID)
+	p, err := a.repo.Person.FindID(ctx, user.ID)
 	if err != nil {
 		return resp, err
 	}
