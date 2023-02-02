@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS address (
   id SERIAL,
-  uuid CHAR(32),
+  uuid CHAR(36),
   street VARCHAR(255),
   city VARCHAR(255),
   zip varchar(8) not null,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS address (
 
 CREATE TABLE IF NOT EXISTS subjects (
   id SERIAL,
-  uuid CHAR(32),
+  uuid CHAR(36),
   nome VARCHAR(255),
 
   PRIMARY KEY (id)
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS subjects (
 
 CREATE TABLE IF NOT EXISTS classroom (
   id SERIAL,
-  uuid CHAR(32),
+  uuid CHAR(36),
   name VARCHAR(100),
 
   PRIMARY KEY (id)
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS subjects_classroom (
 
 CREATE TABLE IF NOT EXISTS school (
   id SERIAL,
-  uuid CHAR(32),
+  uuid CHAR(36),
   name varchar(255),
   address_id int,
 
@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS school_classroom (
 
 CREATE TABLE IF NOT EXISTS persons(
   id SERIAL PRIMARY KEY,
-  uuid CHAR(32),
+  uuid CHAR(36),
   name varchar(255) not null,
   email varchar(255) unique not null,
   phone varchar(11),
