@@ -15,6 +15,13 @@ type Adapters struct {
 	Srv  *services.Services
 }
 
+func (a *Adapters) Close() error {
+	a.Pool.Close()
+	a.Srv = nil
+	a.Repo = nil
+	return nil
+}
+
 func Connect() *Adapters {
 	err := os.Setenv("DB_URI", "postgres://root:secret@abobrinha:5432/schoolplus?sslmode=disable")
 	if err != nil {
