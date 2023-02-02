@@ -18,11 +18,12 @@ import (
 	"time"
 )
 
-func main() {
-	var (
-		debugMode bool
-		seed      bool
-	)
+var (
+	debugMode bool
+	seed      bool
+)
+
+func init() {
 	flag.BoolVar(&debugMode, "debug", false, "run routes without authorization")
 	flag.BoolVar(&seed, "seed", false, "seed database with dumb data")
 	flag.Parse()
@@ -37,7 +38,9 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+}
 
+func main() {
 	dbPool, err := database.NewPostgres(5)
 	if err != nil {
 		log.Fatal(err)
