@@ -18,7 +18,7 @@ func NewStudentHandler(s *services.Services) *StudentHandler {
 }
 
 func (s *StudentHandler) Find(c *gin.Context) {
-	list, err := s.personService.FetchAll(entities.PersonStudent)
+	list, err := s.personService.FetchAll(c, entities.PersonStudent)
 	if err != nil {
 		log.Println("falha ao buscar estudantes: err:", err)
 		c.String(http.StatusInternalServerError, "error ao buscar estudantes")
@@ -52,7 +52,7 @@ func (s *StudentHandler) Create(c *gin.Context) {
 		Birthdate: req.Birthdate,
 		AddressID: req.Address.ID,
 	}
-	uid, err := s.personService.Create(p)
+	uid, err := s.personService.Create(c, p)
 	if err != nil {
 		log.Println("error ao criar estudante: err:", err)
 		c.String(http.StatusBadRequest, "não foi possível criar estudante")
