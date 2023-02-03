@@ -3,7 +3,7 @@ package database
 import (
 	"errors"
 	"github.com/gocraft/dbr/v2"
-	"log"
+	"github.com/golangsugar/chatty"
 	"os"
 	"sync"
 )
@@ -84,10 +84,10 @@ func (p *Postgres) factorySession() *dbr.Session {
 
 // Ping try to ping database
 func (p *Postgres) Ping() bool {
-	log.Println("trying to ping database...")
+	chatty.Info("trying to ping database...")
 	err := p.db.Ping()
 	if err != nil {
-		log.Println("failed to ping db, err:", err)
+		chatty.Errorf("failed to ping db, err:", err)
 		return false
 	}
 
@@ -97,14 +97,13 @@ func (p *Postgres) Ping() bool {
 // connectPostgres try to connectPostgres DB with environment variable
 func connectPostgres(size uint) *dbr.Connection {
 	connStr := os.Getenv("DB_URI")
-	log.Println("DEBUG", connStr)
 	if connStr == "" {
-		log.Fatal("empty db connection string")
+		chatty.Fatal("empty db connection string")
 	}
 
 	db, err := dbr.Open("postgres", connStr, nil)
 	if err != nil {
-		log.Panic("failed to connect to database:", err)
+		chatty.Fatalf("failed to connect to database:", err)
 	}
 
 	db.SetMaxOpenConns(int(size))

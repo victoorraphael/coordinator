@@ -4,13 +4,13 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"github.com/golangsugar/chatty"
 	_ "github.com/lib/pq"
 	httphdl "github.com/victoorraphael/coordinator/cmd/http"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
 	"github.com/victoorraphael/coordinator/pkg/database"
 	"github.com/victoorraphael/coordinator/pkg/fixtures"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -28,14 +28,17 @@ func init() {
 	flag.BoolVar(&seed, "seed", false, "seed database with dumb data")
 	flag.Parse()
 
+	chatty.SetSeverityLevelDebug()
+	chatty.SetGlobalOutputFormatPlainText()
+
 	if seed {
-		log.Println("seeding database...")
+		chatty.Debug("seed database...")
 		err := fixtures.
 			Connect().
 			Seed().
 			Close()
 		if err != nil {
-			log.Fatal(err)
+			chatty.FatalErr(err)
 		}
 	}
 }
@@ -43,19 +46,19 @@ func init() {
 func main() {
 	dbPool, err := database.NewPostgres(5)
 	if err != nil {
-		log.Fatal(err)
+		chatty.FatalErr(err)
 	}
 	defer dbPool.Close()
 
 	conn, err := dbPool.Acquire()
 	if err != nil {
-		log.Panic(err)
+		chatty.FatalErr(err)
 	}
 	dbPool.Release(conn)
 
-	log.Println("health: trying to ping database")
+	chatty.Info("health: trying to ping database")
 	if err := conn.Ping(); err != nil {
-		log.Panic(err)
+		chatty.FatalErr(err)
 	}
 
 	repo := repository.New(dbPool)
@@ -75,7 +78,7 @@ func main() {
 	go func() {
 		err := srv.ListenAndServe()
 		if err != nil {
-			log.Println(err)
+			chatty.FatalErr(err)
 		}
 	}()
 
@@ -88,5 +91,5 @@ func main() {
 	defer cancel()
 
 	_ = srv.Shutdown(ctx)
-	log.Println("shutting down! 👋")
+	chatty.Info("shutting down! 👋")
 }

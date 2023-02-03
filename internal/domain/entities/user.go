@@ -2,9 +2,8 @@ package entities
 
 import (
 	"errors"
-	"log"
-
 	"github.com/badoux/checkmail"
+	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/pkg/security"
 )
 
@@ -36,13 +35,13 @@ func (u *User) Validate(password string) error {
 	}
 	err := checkmail.ValidateFormat(u.Email)
 	if err != nil {
-		log.Println("[user:Validate]: email inválido")
+		chatty.Info("[user:Validate]: email inválido")
 		return errors.New("credenciais inválidas")
 	}
 
 	ok := security.PasswordValid(u.PasswordHash, password)
 	if !ok {
-		log.Println("[user:Validate]: password inválido")
+		chatty.Info("[user:Validate]: password inválido")
 		return errors.New("credenciais inválidas")
 	}
 
@@ -63,7 +62,7 @@ func (u *UserLoginView) Validate() error {
 	}
 	err := checkmail.ValidateFormat(u.Email)
 	if err != nil {
-		log.Println("[userLoginView:Validate]: email inválido")
+		chatty.Info("email inválido")
 		return errors.New("email inválido")
 	}
 

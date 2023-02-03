@@ -3,10 +3,10 @@ package services
 import (
 	"context"
 	"errors"
+	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/pkg/uid"
-	"log"
 )
 
 type IAddressService interface {
@@ -33,7 +33,7 @@ func (a *address) Create(ctx context.Context, addr *entities.Address) error {
 		Zip:    addr.Zip,
 	})
 	if err != nil {
-		log.Println("info: error:", err)
+		chatty.Info(err.Error())
 		return err
 	}
 

@@ -2,9 +2,9 @@ package handlers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
-	"log"
 	"net/http"
 	"time"
 )
@@ -20,7 +20,7 @@ func NewStudentHandler(s *services.Services) *StudentHandler {
 func (s *StudentHandler) Find(c *gin.Context) {
 	list, err := s.personService.FetchAll(c, entities.PersonStudent)
 	if err != nil {
-		log.Println("falha ao buscar estudantes: err:", err)
+		chatty.Errorf("falha ao buscar estudantes: err:", err)
 		c.String(http.StatusInternalServerError, "error ao buscar estudantes")
 		return
 	}
@@ -40,7 +40,7 @@ type CreateStudentRequest struct {
 func (s *StudentHandler) Create(c *gin.Context) {
 	var req CreateStudentRequest
 	if err := c.Bind(&req); err != nil {
-		log.Println("error ao fazer unmarshal de estudante: err:", err)
+		chatty.Errorf("error ao fazer unmarshal de estudante: err:", err)
 		c.String(http.StatusBadRequest, "campos inválidos")
 		return
 	}
@@ -54,7 +54,7 @@ func (s *StudentHandler) Create(c *gin.Context) {
 	}
 	uid, err := s.personService.Create(c, p)
 	if err != nil {
-		log.Println("error ao criar estudante: err:", err)
+		chatty.Errorf("error ao criar estudante: err:", err)
 		c.String(http.StatusBadRequest, "não foi possível criar estudante")
 		return
 	}
