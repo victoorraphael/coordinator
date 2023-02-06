@@ -46,6 +46,10 @@ func (s *StudentHandler) Create(c *gin.Context) {
 		return
 	}
 
+	if req.Address.UUID != "" {
+		s.srv.Address
+	}
+
 	p := entities.Person{
 		UUID:      uid.NewUUID().String(),
 		Name:      req.Name,
@@ -54,7 +58,7 @@ func (s *StudentHandler) Create(c *gin.Context) {
 		Birthdate: req.Birthdate,
 		AddressID: req.Address.ID,
 	}
-	_, err := s.srv.Person.Create(c, p)
+	_, err := s.srv.Student.Create(ctx, p)
 	if err != nil {
 		chatty.Errorf("error ao criar estudante: err: %v", err)
 		c.String(http.StatusBadRequest, "não foi possível criar estudante")

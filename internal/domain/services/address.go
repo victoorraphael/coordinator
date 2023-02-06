@@ -13,6 +13,7 @@ type IAddressService interface {
 	FetchAll(ctx context.Context) ([]entities.Address, error)
 	Create(ctx context.Context, addr *entities.Address) error
 	Update(ctx context.Context, addr entities.Address) error
+	Find(ctx context.Context, addr entities.Address) (entities.Address, error)
 }
 
 type address struct {
