@@ -10,17 +10,17 @@ import (
 )
 
 type AddressHandler struct {
-	addr services.IAddressService
+	srv *services.Services
 }
 
 func NewAddressHandler(s *services.Services) *AddressHandler {
-	return &AddressHandler{s.Address}
+	return &AddressHandler{s}
 }
 
 func (a *AddressHandler) Find(c *gin.Context) {
-	list, err := a.addr.FetchAll(c)
+	list, err := a.srv.Address.FetchAll(c)
 	if err != nil {
-		chatty.Errorf("falha ao buscar endereços: err:", err)
+		chatty.Errorf("falha ao buscar endereços: err: %v", err)
 		c.String(http.StatusInternalServerError, "não foi possível buscar endereços")
 		return
 	}
@@ -34,7 +34,7 @@ func (a *AddressHandler) Create(c *gin.Context) {
 		return
 	}
 
-	err := a.addr.Create(c, &addr)
+	err := a.srv.Address.Create(c, &addr)
 	if err != nil {
 		c.String(http.StatusInternalServerError, fmt.Errorf("não foi possível criar o endereço: %w", err).Error())
 		return

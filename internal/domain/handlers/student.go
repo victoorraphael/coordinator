@@ -5,22 +5,23 @@ import (
 	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
+	"github.com/victoorraphael/coordinator/pkg/uid"
 	"net/http"
 	"time"
 )
 
 type StudentHandler struct {
-	personService services.IPersonService
+	srv *services.Services
 }
 
 func NewStudentHandler(s *services.Services) *StudentHandler {
-	return &StudentHandler{personService: s.Person}
+	return &StudentHandler{s}
 }
 
 func (s *StudentHandler) Find(c *gin.Context) {
-	list, err := s.personService.FetchAll(c, entities.PersonStudent)
+	list, err := s.srv.Person.FetchAll(c, entities.PersonStudent)
 	if err != nil {
-		chatty.Errorf("falha ao buscar estudantes: err:", err)
+		chatty.Errorf("falha ao buscar estudantes: err: %v", err)
 		c.String(http.StatusInternalServerError, "error ao buscar estudantes")
 		return
 	}
@@ -40,26 +41,25 @@ type CreateStudentRequest struct {
 func (s *StudentHandler) Create(c *gin.Context) {
 	var req CreateStudentRequest
 	if err := c.Bind(&req); err != nil {
-		chatty.Errorf("error ao fazer unmarshal de estudante: err:", err)
+		chatty.Errorf("error ao fazer unmarshal de estudante: err: %v", err)
 		c.String(http.StatusBadRequest, "campos inválidos")
 		return
 	}
 
 	p := entities.Person{
+		UUID:      uid.NewUUID().String(),
 		Name:      req.Name,
 		Email:     req.Email,
 		Phone:     req.Phone,
 		Birthdate: req.Birthdate,
 		AddressID: req.Address.ID,
 	}
-	uid, err := s.personService.Create(c, p)
+	_, err := s.srv.Person.Create(c, p)
 	if err != nil {
-		chatty.Errorf("error ao criar estudante: err:", err)
+		chatty.Errorf("error ao criar estudante: err: %v", err)
 		c.String(http.StatusBadRequest, "não foi possível criar estudante")
 		return
 	}
-
-	p.UUID = uid
 
 	c.JSON(http.StatusCreated, p)
 }

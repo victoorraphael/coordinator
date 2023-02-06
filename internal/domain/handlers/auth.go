@@ -8,11 +8,11 @@ import (
 )
 
 type AuthHandler struct {
-	auth services.IAuthenticationService
+	srv *services.Services
 }
 
 func NewAuthHandler(s *services.Services) *AuthHandler {
-	return &AuthHandler{s.Auth}
+	return &AuthHandler{s}
 }
 
 func (a *AuthHandler) Login(c *gin.Context) {
@@ -22,7 +22,7 @@ func (a *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	resp, err := a.auth.Login(c, req)
+	resp, err := a.srv.Auth.Login(c, req)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return
@@ -38,7 +38,7 @@ func (a *AuthHandler) SignIn(c *gin.Context) {
 		return
 	}
 
-	err := a.auth.SignIn(c, req)
+	err := a.srv.Auth.SignIn(c, req)
 	if err != nil {
 		c.String(http.StatusBadRequest, err.Error())
 		return

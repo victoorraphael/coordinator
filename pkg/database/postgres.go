@@ -87,7 +87,7 @@ func (p *Postgres) Ping() bool {
 	chatty.Info("trying to ping database...")
 	err := p.db.Ping()
 	if err != nil {
-		chatty.Errorf("failed to ping db, err:", err)
+		chatty.Errorf("failed to ping db, err: %v", err)
 		return false
 	}
 
@@ -103,7 +103,7 @@ func connectPostgres(size uint) *dbr.Connection {
 
 	db, err := dbr.Open("postgres", connStr, nil)
 	if err != nil {
-		chatty.Fatalf("failed to connect to database:", err)
+		chatty.Fatalf("failed to connect to database: %v", err)
 	}
 
 	db.SetMaxOpenConns(int(size))

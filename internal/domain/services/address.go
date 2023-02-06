@@ -12,6 +12,7 @@ import (
 type IAddressService interface {
 	FetchAll(ctx context.Context) ([]entities.Address, error)
 	Create(ctx context.Context, addr *entities.Address) error
+	Update(ctx context.Context, addr entities.Address) error
 }
 
 type address struct {
@@ -20,6 +21,10 @@ type address struct {
 
 func NewAddressService(repo *repository.Repo) IAddressService {
 	return &address{repo}
+}
+
+func (a *address) Update(ctx context.Context, addr entities.Address) error {
+	return nil
 }
 
 func (a *address) FetchAll(ctx context.Context) ([]entities.Address, error) {

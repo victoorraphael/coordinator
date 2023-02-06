@@ -8,7 +8,11 @@ import (
 
 type IPersonService interface {
 	FetchAll(ctx context.Context, t entities.PersonType) ([]entities.Person, error)
-	Create(ctx context.Context, person entities.Person) (string, error)
+	Create(ctx context.Context, person entities.Person) (int64, error)
+}
+
+func NewPersonService(repo *repository.Repo) IPersonService {
+	return &person{repo}
 }
 
 type person struct {
@@ -19,11 +23,7 @@ func (p *person) FetchAll(ctx context.Context, t entities.PersonType) ([]entitie
 	return p.repo.Person.List(ctx, t)
 }
 
-func (p *person) Create(ctx context.Context, person entities.Person) (string, error) {
+func (p *person) Create(ctx context.Context, person entities.Person) (int64, error) {
 	err := p.repo.Person.Add(ctx, &person)
-	return person.UUID, err
-}
-
-func NewPersonService(repo *repository.Repo) IPersonService {
-	return &person{repo}
+	return person.ID, err
 }

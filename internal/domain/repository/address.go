@@ -83,7 +83,7 @@ func (a *address) List(ctx context.Context) ([]entities.Address, error) {
 	return resp, errSelect
 }
 
-func (a address) Find(ctx context.Context, id int64) (entities.Address, error) {
+func (a *address) Find(ctx context.Context, id int64) (entities.Address, error) {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return entities.Address{}, err
@@ -99,7 +99,7 @@ func (a address) Find(ctx context.Context, id int64) (entities.Address, error) {
 	return resp, err
 }
 
-func (a address) Add(ctx context.Context, addr *entities.Address) error {
+func (a *address) Add(ctx context.Context, addr *entities.Address) error {
 	conn, err := a.pool.Acquire()
 	if err != nil {
 		return err
