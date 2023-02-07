@@ -15,32 +15,18 @@ func Routes(s *services.Services, test ...bool) *gin.Engine {
 	})
 
 	// auth Routes
-	{
-		authGroup := public.Group("/auth")
-		hdl := handlers.NewAuthHandler(s)
-		authGroup.
-			POST("/login", hdl.Login)
-	}
+	handlers.RegisterAuthRoutes(s, public)
 
 	private := r.Group("/", AuthMiddleware(), SessionMiddleware())
 
 	// address Routes
-	{
-		addressGroup := private.Group("address")
-		hdl := handlers.NewAddressHandler(s)
-		addressGroup.
-			GET("", hdl.Find).
-			POST("", hdl.Create)
-	}
+	handlers.RegisterAddressRoutes(s, private)
 
 	// student Routes
-	{
-		studentGroup := private.Group("students")
-		hdl := handlers.NewStudentHandler(s)
-		studentGroup.
-			GET("", hdl.Find).
-			POST("", hdl.Create)
-	}
+	handlers.RegisterStudentRoutes(s, private)
+
+	// school Routes
+	handlers.RegisterSchoolRoutes(s, private)
 
 	return r
 }

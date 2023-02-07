@@ -10,15 +10,19 @@ import (
 	"net/http"
 )
 
-type StudentHandler struct {
+type studentHandler struct {
 	srv *services.Services
 }
 
-func NewStudentHandler(s *services.Services) *StudentHandler {
-	return &StudentHandler{s}
+func RegisterStudentRoutes(srv *services.Services, router *gin.RouterGroup) {
+	hdl := &studentHandler{srv}
+	studentGroup := router.Group("students")
+	studentGroup.
+		GET("", hdl.Find).
+		POST("", hdl.Create)
 }
 
-func (s *StudentHandler) Find(c *gin.Context) {
+func (s *studentHandler) Find(c *gin.Context) {
 	list, err := s.srv.Person.FetchAll(c, entities.PersonStudent)
 	if err != nil {
 		chatty.Errorf("falha ao buscar estudantes: err: %v", err)
@@ -29,7 +33,7 @@ func (s *StudentHandler) Find(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
-func (s *StudentHandler) Create(c *gin.Context) {
+func (s *studentHandler) Create(c *gin.Context) {
 	var req entities.CreateStudent
 	if err := c.Bind(&req); err != nil {
 		chatty.Errorf("error ao fazer unmarshal de estudante: err: %v", err)

@@ -8,6 +8,7 @@ type Services struct {
 	Address IAddressService
 	Person  IPersonService
 	Auth    IAuthenticationService
+	School  ISchoolService
 }
 
 // New returns instances of all services
@@ -16,5 +17,6 @@ func New(repo *repository.Repo) *Services {
 		Address: NewAddressService(repo),
 		Person:  NewPersonService(repo),
 		Auth:    NewAuthenticationService(repo),
+		School:  NewSchoolService(repo),
 	}
 }

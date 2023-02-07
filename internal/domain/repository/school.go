@@ -45,6 +45,7 @@ func (s *school) Add(ctx context.Context, school *entities.School) error {
 	defer s.pool.Release(conn)
 
 	err = conn.InsertInto("school").
+		Pair("uuid", school.UUID).
 		Pair("name", school.Name).
 		Pair("address_id", school.AddressID).
 		Returning("id").

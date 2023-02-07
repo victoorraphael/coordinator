@@ -7,15 +7,18 @@ import (
 	"net/http"
 )
 
-type AuthHandler struct {
+type authHandler struct {
 	srv *services.Services
 }
 
-func NewAuthHandler(s *services.Services) *AuthHandler {
-	return &AuthHandler{s}
+func RegisterAuthRoutes(s *services.Services, router *gin.RouterGroup) {
+	hdl := authHandler{s}
+	authGroup := router.Group("/auth")
+	authGroup.
+		POST("/login", hdl.Login)
 }
 
-func (a *AuthHandler) Login(c *gin.Context) {
+func (a *authHandler) Login(c *gin.Context) {
 	var req entities.UserLoginView
 	if err := c.ShouldBind(&req); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
@@ -31,7 +34,7 @@ func (a *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func (a *AuthHandler) SignIn(c *gin.Context) {
+func (a *authHandler) SignIn(c *gin.Context) {
 	var req entities.UserLoginView
 	if err := c.ShouldBind(&req); err != nil {
 		c.String(http.StatusBadRequest, err.Error())
