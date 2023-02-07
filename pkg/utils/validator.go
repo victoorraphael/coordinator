@@ -1,14 +1,13 @@
-package helpers
+package utils
 
 import (
 	"fmt"
 	"github.com/victoorraphael/coordinator/pkg/errs"
-	"github.com/victoorraphael/coordinator/pkg/utils"
 	"reflect"
 )
 
 func Validate(s interface{}) error {
-	data, err := utils.GetFields(s, "db")
+	data, err := GetFields(s, "db")
 	if err != nil {
 		return err
 	}

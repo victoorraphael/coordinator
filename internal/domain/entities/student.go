@@ -1,7 +1,7 @@
 package entities
 
 import (
-	"github.com/victoorraphael/coordinator/pkg/helpers"
+	"github.com/victoorraphael/coordinator/pkg/utils"
 	"time"
 )
 
@@ -33,5 +33,5 @@ type CreateStudent struct {
 }
 
 func (c CreateStudent) Validate() error {
-	return helpers.Validate(c)
+	return utils.Validate(c)
 }

@@ -1,6 +1,8 @@
 package entities
 
-import "github.com/victoorraphael/coordinator/pkg/helpers"
+import (
+	"github.com/victoorraphael/coordinator/pkg/utils"
+)
 
 type School struct {
 	ID        int64  `db:"id"`
@@ -15,5 +17,5 @@ type CreateSchool struct {
 }
 
 func (s CreateSchool) Validate() error {
-	return helpers.Validate(s)
+	return utils.Validate(s)
 }
