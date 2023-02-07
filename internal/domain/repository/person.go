@@ -11,6 +11,7 @@ type IPersonRepository interface {
 	Add(ctx context.Context, p *entities.Person) error
 	FindUUID(ctx context.Context, uuid string) (entities.Person, error)
 	FindID(ctx context.Context, id int64) (entities.Person, error)
+	FindEmail(ctx context.Context, email string) (entities.Person, error)
 	Delete(ctx context.Context, uuid string) error
 	Update(ctx context.Context, p entities.Person) error
 }
@@ -81,6 +82,21 @@ func (p *person) FindUUID(ctx context.Context, uuid string) (entities.Person, er
 	_, err = conn.Select("*").
 		From("persons").
 		Where("uuid = ?", uuid).
+		LoadContext(ctx, &res)
+	return res, err
+}
+
+func (p *person) FindEmail(ctx context.Context, email string) (entities.Person, error) {
+	conn, err := p.pool.Acquire()
+	if err != nil {
+		return entities.Person{}, err
+	}
+	defer p.pool.Release(conn)
+
+	var res entities.Person
+	_, err = conn.Select("*").
+		From("persons").
+		Where("email = ?", email).
 		LoadContext(ctx, &res)
 	return res, err
 }

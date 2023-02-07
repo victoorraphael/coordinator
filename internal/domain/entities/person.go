@@ -19,22 +19,12 @@ type Person struct {
 }
 
 type PersonView struct {
-	UUID      uuid.UUID `json:"uuid"`
-	Name      string    `json:"name"`
-	Email     string    `json:"email"`
-	Phone     string    `json:"phone"`
-	Birthdate time.Time `json:"birthdate"`
-}
-
-type PersonViewDetailed struct {
-	UUID      uuid.UUID  `json:"uuid"`
-	Name      string     `json:"name"`
-	Email     string     `json:"email"`
-	Phone     string     `json:"phone"`
-	Birthdate time.Time  `json:"birthdate"`
-	Type      PersonType `json:"type"`
-	Address   Address    `json:"address"`
-	School    School     `json:"school"`
+	UUID        uuid.UUID `json:"uuid"`
+	Name        string    `json:"name"`
+	Email       string    `json:"email"`
+	Phone       string    `json:"phone"`
+	Birthdate   time.Time `json:"birthdate"`
+	AddressUUID string    `json:"address"`
 }
 
 // PersonType represents type of persons on system

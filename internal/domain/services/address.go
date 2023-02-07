@@ -3,9 +3,11 @@ package services
 import (
 	"context"
 	"errors"
+
 	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
+	"github.com/victoorraphael/coordinator/pkg/errs"
 	"github.com/victoorraphael/coordinator/pkg/uid"
 )
 
@@ -22,6 +24,19 @@ type address struct {
 
 func NewAddressService(repo *repository.Repo) IAddressService {
 	return &address{repo}
+}
+
+func (a *address) Find(ctx context.Context, addr entities.Address) (entities.Address, error) {
+	if addr.UUID == "" && addr.ID <= 0 {
+		return entities.Address{}, errs.WrapError(errs.ErrInternalError, "missing query fields uuid")
+	}
+
+	found, err := a.repo.Address.Search(ctx, addr)
+	if err != nil {
+		return entities.Address{}, err
+	}
+
+	return found, nil
 }
 
 func (a *address) Update(ctx context.Context, addr entities.Address) error {

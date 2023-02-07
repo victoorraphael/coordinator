@@ -13,13 +13,12 @@ func Validate(s interface{}) error {
 		return err
 	}
 
-	var errField error
 	for idx := range data {
 		check := reflect.ValueOf(data[idx].Data).IsZero()
 		if check {
-			errField = errs.WrapError(errs.ErrFieldViolation, fmt.Sprintf("%s should not be empty", data[idx].Column))
+			return errs.WrapError(errs.ErrFieldViolation, fmt.Sprintf("campo %s nao deve ser vazio", data[idx].Column))
 		}
 	}
 
-	return errField
+	return nil
 }

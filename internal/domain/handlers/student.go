@@ -5,9 +5,9 @@ import (
 	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
+	"github.com/victoorraphael/coordinator/pkg/errs"
 	"github.com/victoorraphael/coordinator/pkg/uid"
 	"net/http"
-	"time"
 )
 
 type StudentHandler struct {
@@ -29,25 +29,44 @@ func (s *StudentHandler) Find(c *gin.Context) {
 	c.JSON(http.StatusOK, list)
 }
 
-type CreateStudentRequest struct {
-	Name      string           `json:"name"`
-	Email     string           `json:"email"`
-	Phone     string           `json:"phone"`
-	Birthdate time.Time        `json:"birthdate"`
-	Address   entities.Address `json:"address"`
-	SchoolID  int64            `json:"school_id"`
-}
-
 func (s *StudentHandler) Create(c *gin.Context) {
-	var req CreateStudentRequest
+	var req entities.CreateStudent
 	if err := c.Bind(&req); err != nil {
 		chatty.Errorf("error ao fazer unmarshal de estudante: err: %v", err)
 		c.String(http.StatusBadRequest, "campos inválidos")
 		return
 	}
 
-	if req.Address.UUID != "" {
-		s.srv.Address
+	if err := req.Validate(); err != nil {
+		chatty.Errorf("error ao criar estudante: %v", err.Error())
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	per, err := s.srv.Person.Search(c, entities.Person{Email: req.Email})
+	if err != nil {
+		chatty.Errorf("error ao criar estudante: %v", err.Error())
+		c.String(http.StatusBadRequest, errs.WrapError(errs.ErrInternalError, "nao foi possivel verificar se email ja existe").Error())
+		return
+	}
+
+	if per.UUID != "" {
+		chatty.Error("error ao criar estudante: email ja cadastrado")
+		c.String(http.StatusBadRequest, errs.WrapError(errs.ErrFieldViolation, "email ja cadastrado ").Error())
+		return
+	}
+
+	if req.AddressID == "" {
+		chatty.Error("error ao criar estudante: endereco vazio")
+		c.String(http.StatusBadRequest, errs.WrapError(errs.ErrFieldViolation, "endereco id vazio").Error())
+		return
+	}
+
+	addr, err := s.srv.Address.Find(c, entities.Address{UUID: req.AddressID})
+	if err != nil {
+		chatty.Errorf("error ao criar estudante: %v", err)
+		c.String(http.StatusBadRequest, err.Error())
+		return
 	}
 
 	p := entities.Person{
@@ -56,9 +75,9 @@ func (s *StudentHandler) Create(c *gin.Context) {
 		Email:     req.Email,
 		Phone:     req.Phone,
 		Birthdate: req.Birthdate,
-		AddressID: req.Address.ID,
+		AddressID: addr.ID,
 	}
-	_, err := s.srv.Student.Create(ctx, p)
+	_, err = s.srv.Person.Create(c, p)
 	if err != nil {
 		chatty.Errorf("error ao criar estudante: err: %v", err)
 		c.String(http.StatusBadRequest, "não foi possível criar estudante")

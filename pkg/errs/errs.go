@@ -7,6 +7,7 @@ import (
 
 var (
 	ErrFieldViolation = errors.New("field violation")
+	ErrInternalError  = errors.New("internal error")
 )
 
 func WrapError(err error, msg string) error {
