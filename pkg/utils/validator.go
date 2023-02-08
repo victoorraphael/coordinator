@@ -21,3 +21,19 @@ func Validate(s interface{}) error {
 
 	return nil
 }
+
+// RequiredFields check if value of fields are empty, based on tag "db"
+func RequiredFields(s any, fields ...string) error {
+	cols, err := GetFields(s, "db")
+	if err != nil {
+		return err
+	}
+
+	colsMap := cols.ToMap()
+	for idx := range fields {
+		if reflect.ValueOf(colsMap[fields[idx]]).IsZero() {
+			return errs.WrapError(errs.ErrFieldViolation, fmt.Sprintf("campo %s nao deve ser vazio", fields[idx]))
+		}
+	}
+	return nil
+}

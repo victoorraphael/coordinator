@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
@@ -18,16 +17,16 @@ func RegisterAddressRoutes(srv *services.Services, router *gin.RouterGroup) {
 	hdl := &addressHandler{srv}
 	addressGroup := router.Group("address")
 	addressGroup.
-		GET("", hdl.Find).
+		GET("", hdl.List).
 		GET("/:uuid", hdl.FindUUID).
 		POST("", hdl.Create)
 }
 
-func (a *addressHandler) Find(c *gin.Context) {
+func (a *addressHandler) List(c *gin.Context) {
 	list, err := a.srv.Address.FetchAll(c)
 	if err != nil {
 		chatty.Errorf("falha ao buscar endereços: err: %v", err)
-		c.String(http.StatusInternalServerError, "não foi possível buscar endereços")
+		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 	c.JSON(http.StatusOK, list)
@@ -36,13 +35,13 @@ func (a *addressHandler) Find(c *gin.Context) {
 func (a *addressHandler) Create(c *gin.Context) {
 	var addr entities.Address
 	if err := c.Bind(&addr); err != nil {
-		c.String(http.StatusBadRequest, "campos inválidos")
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	err := a.srv.Address.Create(c, &addr)
 	if err != nil {
-		c.String(http.StatusInternalServerError, fmt.Errorf("não foi possível criar o endereço: %w", err).Error())
+		c.String(http.StatusInternalServerError, err.Error())
 		return
 	}
 
@@ -52,7 +51,7 @@ func (a *addressHandler) Create(c *gin.Context) {
 func (a *addressHandler) FindUUID(c *gin.Context) {
 	key := c.Param("uuid")
 	if key == "" {
-		chatty.Error("falha ao buscar endereco: empty uuid")
+		chatty.Error("falha ao buscar endereco: uuid vazio")
 		c.String(http.StatusBadRequest, errs.WrapError(errs.ErrFieldViolation, "uuid nao pode ser vazio").Error())
 		return
 	}
@@ -60,7 +59,7 @@ func (a *addressHandler) FindUUID(c *gin.Context) {
 	addr, err := a.srv.Address.Find(c, entities.Address{UUID: key})
 	if err != nil {
 		chatty.Errorf("falha ao buscar endereco: %v", err)
-		c.String(http.StatusBadRequest, errs.WrapError(errs.ErrInternalError, "falha ao buscar endereco").Error())
+		c.String(http.StatusBadRequest, err.Error())
 		return
 	}
 

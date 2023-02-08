@@ -3,7 +3,7 @@ package services
 import (
 	"context"
 	"errors"
-
+	"github.com/gocraft/dbr/v2"
 	"github.com/golangsugar/chatty"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
@@ -14,7 +14,6 @@ import (
 type IAddressService interface {
 	FetchAll(ctx context.Context) ([]entities.Address, error)
 	Create(ctx context.Context, addr *entities.Address) error
-	Update(ctx context.Context, addr entities.Address) error
 	Find(ctx context.Context, addr entities.Address) (entities.Address, error)
 }
 
@@ -39,12 +38,12 @@ func (a *address) Find(ctx context.Context, addr entities.Address) (entities.Add
 	return found, nil
 }
 
-func (a *address) Update(ctx context.Context, addr entities.Address) error {
-	return nil
-}
-
 func (a *address) FetchAll(ctx context.Context) ([]entities.Address, error) {
-	return a.repo.Address.List(ctx)
+	list, err := a.repo.Address.List(ctx)
+	if err != nil {
+		return nil, errs.WrapError(errs.ErrInternalError, "nao foi possivel buscar enderecos")
+	}
+	return list, nil
 }
 
 func (a *address) Create(ctx context.Context, addr *entities.Address) error {
@@ -53,15 +52,19 @@ func (a *address) Create(ctx context.Context, addr *entities.Address) error {
 		City:   addr.City,
 		Zip:    addr.Zip,
 	})
-	if err != nil {
-		chatty.Info(err.Error())
-		return err
+	if err != nil && !errors.Is(err, dbr.ErrNotFound) {
+		chatty.Errorf("erro ao buscar endereco %#v: err: %v", *addr, err)
+		return errs.WrapError(errs.ErrInternalError, "falha ao criar endereco")
 	}
 
 	if exist.ID != 0 {
-		return errors.New("endereço já existe")
+		return errs.WrapError(errs.ErrFieldViolation, "endereco ja cadastrado")
 	}
 
 	addr.UUID = uid.NewUUID().String()
-	return a.repo.Address.Add(ctx, addr)
+	if err := a.repo.Address.Add(ctx, addr); err != nil {
+		chatty.Errorf("falha ao criar endereco: err: %v", err)
+		return errs.WrapError(errs.ErrInternalError, "nao foi possivel criar endereco")
+	}
+	return nil
 }
