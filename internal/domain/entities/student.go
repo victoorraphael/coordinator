@@ -8,7 +8,7 @@ import (
 // NewStudent returns a new Student as pointer
 func NewStudent() *Student {
 	return &Student{
-		Person: Person{},
+		Person: Person{Type: PersonStudent},
 	}
 }
 

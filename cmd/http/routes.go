@@ -28,5 +28,8 @@ func Routes(s *services.Services, test ...bool) *gin.Engine {
 	// school Routes
 	handlers.RegisterSchoolRoutes(s, private)
 
+	// subject Routes
+	handlers.RegisterSubjectRoutes(s, private)
+
 	return r
 }
