@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/pkg/database"
 	"github.com/victoorraphael/coordinator/pkg/utils"
