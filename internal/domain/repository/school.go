@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+
 	"github.com/gocraft/dbr/v2"
 	"github.com/victoorraphael/coordinator/internal/domain/entities"
 	"github.com/victoorraphael/coordinator/pkg/database"
@@ -11,6 +12,7 @@ type ISchoolRepository interface {
 	Add(ctx context.Context, school *entities.School) error
 	Delete(ctx context.Context, id int64) error
 	FindClassrooms(ctx context.Context, id int64) ([]entities.Classroom, error)
+	FindUUID(ctx context.Context, uuid string) (entities.School, error)
 }
 
 func NewSchoolRespository(pool database.DBPool) ISchoolRepository {
@@ -19,6 +21,21 @@ func NewSchoolRespository(pool database.DBPool) ISchoolRepository {
 
 type school struct {
 	pool database.DBPool
+}
+
+func (s *school) FindUUID(ctx context.Context, uuid string) (entities.School, error) {
+	conn, err := s.pool.Acquire()
+	if err != nil {
+		return entities.School{}, err
+	}
+	defer s.pool.Release(conn)
+
+	var res entities.School
+	_, err = conn.Select("*").
+		From("school").
+		Where("uuid = ?", uuid).
+		LoadContext(ctx, &res)
+	return res, err
 }
 
 func (s *school) FindClassrooms(ctx context.Context, id int64) ([]entities.Classroom, error) {
