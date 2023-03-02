@@ -4,18 +4,20 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/golangsugar/chatty"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	httphdl "github.com/victoorraphael/coordinator/cmd/http"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
 	"github.com/victoorraphael/coordinator/internal/domain/services"
 	"github.com/victoorraphael/coordinator/pkg/database"
 	"github.com/victoorraphael/coordinator/pkg/fixtures"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 var (
@@ -30,6 +32,11 @@ func init() {
 
 	chatty.SetSeverityLevelDebug()
 	chatty.SetGlobalOutputFormatPlainText()
+
+	err := godotenv.Load()
+	if err != nil {
+		chatty.FatalErr(err)
+	}
 
 	if seed {
 		chatty.Debug("seed database...")
