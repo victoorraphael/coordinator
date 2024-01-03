@@ -2,8 +2,9 @@ package utils
 
 import (
 	"fmt"
-	"github.com/victoorraphael/coordinator/pkg/errs"
 	"reflect"
+
+	"github.com/victoorraphael/coordinator/pkg/errs"
 )
 
 func Validate(s interface{}) error {

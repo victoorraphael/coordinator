@@ -2,8 +2,6 @@ package entities
 
 import (
 	"time"
-
-	"github.com/google/uuid"
 )
 
 type Person struct {
@@ -19,7 +17,7 @@ type Person struct {
 }
 
 type PersonView struct {
-	UUID        uuid.UUID `json:"uuid"`
+	UUID        string    `json:"uuid"`
 	Name        string    `json:"name"`
 	Email       string    `json:"email"`
 	Phone       string    `json:"phone"`
