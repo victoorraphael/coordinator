@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/golangsugar/chatty"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	httphdl "github.com/victoorraphael/coordinator/cmd/http"
 	"github.com/victoorraphael/coordinator/internal/domain/repository"
@@ -24,6 +25,7 @@ var (
 )
 
 func init() {
+	_ = godotenv.Load(".env")
 	flag.BoolVar(&debugMode, "debug", false, "run routes without authorization")
 	flag.BoolVar(&seed, "seed", false, "seed database with dumb data")
 	flag.Parse()

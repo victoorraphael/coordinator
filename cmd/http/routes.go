@@ -13,7 +13,6 @@ func Routes(s *services.Services, test ...bool) *gin.Engine {
 	public.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": true})
 	})
-
 	// auth Routes
 	handlers.RegisterAuthRoutes(s, public)
 

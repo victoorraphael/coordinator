@@ -5,15 +5,15 @@ import (
 )
 
 type Person struct {
-	ID        int64      `db:"id"`
-	UUID      string     `db:"uuid"`
-	Name      string     `db:"name"`
-	Email     string     `db:"email"`
-	Phone     string     `db:"phone"`
-	Birthdate time.Time  `db:"birthdate"`
-	CreatedAt time.Time  `db:"created_at"`
-	Type      PersonType `db:"type"`
-	AddressID int64      `db:"address_id"`
+	ID        int64      `db:"id" json:"id"`
+	UUID      string     `db:"uuid" json:"uuid"`
+	Name      string     `db:"name" json:"name"`
+	Email     string     `db:"email" json:"email"`
+	Phone     string     `db:"phone" json:"phone"`
+	Birthdate time.Time  `db:"birthdate" json:"birthdate"`
+	CreatedAt time.Time  `db:"created_at" json:"created_at"`
+	Type      PersonType `db:"type" json:"type"`
+	AddressID int64      `db:"address_id" json:"address_id"`
 }
 
 type PersonView struct {
